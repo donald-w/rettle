@@ -14,7 +14,10 @@ export class KeyComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.display = this.label;
+    if (this.label === "Backspace") {
+      this.display = "Back";
+    } else {
+      this.display = this.label;
+    }
   }
-
 }

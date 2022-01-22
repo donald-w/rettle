@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-letter',
   templateUrl: './letter.component.html',
-  styleUrls: ['./letter.component.scss']
+  styleUrls: ['./letter.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class LetterComponent implements OnInit {
   @Input() row = 0;
