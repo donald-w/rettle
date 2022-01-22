@@ -1,15 +1,11 @@
-<!-- Toolbar -->
-<div class="toolbar" role="banner">
-  <span>Welcome</span>
+<div class="wrapper">
+  <header>
+    <span>Rettle</span>
+  </header>
+
+  <router-outlet></router-outlet>
+
+  <footer>
+    <span>Love it?</span>
+  </footer>
 </div>
-
-<div class="content" role="main">
-    <span>{{ title }} app is running!</span>
-</div>
-
-<!-- Footer -->
-<footer>
-<span>Love it?</span>
-</footer>
-
-<router-outlet></router-outlet>
