@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { GameEngineService } from '../game-engine.service';
 
 @Component({
   selector: 'app-key',
@@ -11,7 +12,7 @@ export class KeyComponent implements OnInit {
 
   public display: string = "";
 
-  constructor() { }
+  constructor(private gameEngine: GameEngineService) { }
 
   ngOnInit(): void {
     if (this.label === "Backspace") {
@@ -19,5 +20,9 @@ export class KeyComponent implements OnInit {
     } else {
       this.display = this.label;
     }
+  }
+
+  onClick(): void {
+    this.gameEngine.keyPressed(this.display);
   }
 }

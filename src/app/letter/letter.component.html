@@ -1,1 +1,9 @@
-<div class="letter">{{value}}</div>
+<div
+  [ngClass]="{
+    'letter': true,
+    'green': isGreen,
+    'yellow': isYellow
+  }"
+>
+  {{ value$ | async }}
+</div>
