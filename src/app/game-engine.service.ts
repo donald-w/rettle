@@ -85,7 +85,6 @@ export class GameEngineService {
 
   setKeyColor(key: string, color: string) {
     const sub = this.keyboardState.get(key);
-    console.log("setting " + key + " to " + color)
     sub?.next(color)
   }
 }

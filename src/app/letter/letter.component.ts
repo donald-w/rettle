@@ -31,8 +31,6 @@ export class LetterComponent implements OnInit {
       this.isYellow = false;
       this.isGrey = false;
 
-      console.log("received:" + value)
-
       if (value === "green") {
         this.isGreen = true;
       } else if (value === "yellow") {
