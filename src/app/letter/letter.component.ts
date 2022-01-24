@@ -5,8 +5,7 @@ import { GameEngineService } from '../game-engine.service';
 @Component({
   selector: 'app-letter',
   templateUrl: './letter.component.html',
-  styleUrls: ['./letter.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./letter.component.scss']
 })
 export class LetterComponent implements OnInit {
   @Input() row = 0;
@@ -14,6 +13,7 @@ export class LetterComponent implements OnInit {
 
   isGreen: boolean = false;
   isYellow: boolean = false;
+  isGrey: boolean = false;
 
   value$: Observable<string> = of("");
   state$: Observable<string> = of("");
@@ -27,14 +27,19 @@ export class LetterComponent implements OnInit {
     this.state$ = this.gameEngine.registerForState(this.row,this.position);
 
     this.state$.subscribe(value => {
+      this.isGreen = false;
+      this.isYellow = false;
+      this.isGrey = false;
+
+      console.log("received:" + value)
+
       if (value === "green") {
-        this.isYellow = false;
         this.isGreen = true;
       } else if (value === "yellow") {
         this.isYellow = true;
-        this.isGreen = false;
+      } else if (value === "grey") {
+        this.isGrey = true;
       }
-
     })
   }
 

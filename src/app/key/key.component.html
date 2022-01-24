@@ -1,1 +1,10 @@
-<button (click)="onClick()">{{display}}</button>
+<button
+[ngClass]="{
+  'light': this.isLight,
+  'dark': this.isDark,
+  'green': this.isGreen,
+  'yellow': this.isYellow
+  
+}"
+
+(click)="onClick()">{{display}}</button>

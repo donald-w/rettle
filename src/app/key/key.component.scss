@@ -6,7 +6,23 @@ button {
   height: 3rem;
   border-style: solid;
   border-radius: 0.3rem;
-  background-color: grey;
+  //background-color: grey;
   color: white;
   margin: 0.1rem;
+}
+
+.green {
+  background-color: green !important;
+}
+
+.yellow {
+  background-color: rgb(224, 196, 68) !important;
+}
+
+.light {
+  background-color: rgb(120, 120, 120) !important;
+}
+
+.dark {
+    background-color: rgb(40, 40, 40) !important;
 }

@@ -1,8 +1,9 @@
 <div
   [ngClass]="{
     'letter': true,
-    'green': isGreen,
-    'yellow': isYellow
+    'green': this.isGreen,
+    'yellow': this.isYellow,
+    'grey': this.isGrey
   }"
 >
   {{ value$ | async }}
