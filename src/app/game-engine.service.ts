@@ -1,4 +1,3 @@
-import { ThrowStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 
@@ -7,6 +6,7 @@ import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 })
 export class GameEngineService {
   word = "MONKEY"
+  wordlength = 6;
   currentWord = 1;
   currentPosition = 1;
 
@@ -17,52 +17,54 @@ export class GameEngineService {
   constructor() { }
 
   keyPressed(key: string): void {
-    if (this.currentPosition === 7 && key === "Enter") {
-      for (let i = 1; i < 7; i++) {
-        const sub = this.gameBoard.get(this.currentWord + "-" + i);
-        let state = this.gameState.get(this.currentWord + "-" + i);
 
-        let letter = sub?.getValue();
+    if (key === "Enter") {
+      if (this.currentPosition === this.wordlength + 1) {
+        for (let i = 1; i < this.wordlength + 1; i++) {
+          const sub = this.gameBoard.get(this.currentWord + "-" + i);
+          let state = this.gameState.get(this.currentWord + "-" + i);
 
-        if (letter === undefined) {
-          return; // TODO fix typing
+          let letter = sub?.getValue();
+
+          if (letter === undefined) {
+            return; // TODO fix typing
+          }
+
+          state?.next("grey");
+
+          if (this.word.includes(letter)) {
+            state?.next("yellow");
+            this.setKeyColor(letter, "yellow");
+          } else {
+            this.setKeyColor(letter, "dark");
+          }
+
+          if (this.word.charAt(i - 1) === letter) {
+            state?.next("green")
+            this.setKeyColor(letter, "green")
+          }
         }
 
-        state?.next("grey");
-
-        if (this.word.includes(letter)) {
-          state?.next("yellow");
-          this.setKeyColor(letter, "yellow");
-        } else {
-          this.setKeyColor(letter, "dark");
-        }
-
-        if (this.word.charAt(i - 1) === letter) {
-          state?.next("green")
-          this.setKeyColor(letter, "green")
-        }
+        this.currentPosition = 1;
+        this.currentWord++;
+      } else {
+        // Ignore since it's not the last entry in the word
       }
-
-      this.currentPosition = 1;
-      this.currentWord++;
-
-      return;
-    }
-
-    if (key === "Back") {
-
+    } else if (key === "Back") {
       if (this.currentPosition > 1) {
         this.currentPosition--;
         const sub = this.gameBoard.get(this.currentWord + "-" + this.currentPosition);
         sub?.next("");
-
-        return;
+      }
+    } else {
+      if (this.currentPosition == this.wordlength + 1) {
+        // Ignore.  Last position, and not enter
+      } else {
+        // Normal key.  Advance
+        const sub = this.gameBoard.get(this.currentWord + "-" + this.currentPosition++);
+        sub?.next(key);
       }
     }
-
-    const sub = this.gameBoard.get(this.currentWord + "-" + this.currentPosition++);
-
-    sub?.next(key);
   }
 
   registerForValue(word: number, position: number): Observable<string> {
