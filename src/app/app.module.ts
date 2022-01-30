@@ -8,6 +8,7 @@ import { GameComponent } from './game/game.component';
 import { LetterComponent } from './letter/letter.component';
 import { KeyboardComponent } from './keyboard/keyboard.component';
 import { KeyComponent } from './key/key.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { KeyComponent } from './key/key.component';
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule
   ],
