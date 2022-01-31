@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { DictionaryService } from './dictionary.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,12 +15,35 @@ export class GameEngineService {
   gameState = new Map<string, Subject<string>>();
   keyboardState = new Map<string, Subject<string>>();
 
-  constructor() { }
+  constructor(private dictionary: DictionaryService) {
+  }
 
   keyPressed(key: string): void {
 
     if (key === "Enter") {
       if (this.currentPosition === this.wordlength + 1) {
+        let guess = "";
+
+        for (let i = 1; i < this.wordlength + 1; i++) {
+          const sub = this.gameBoard.get(this.currentWord + "-" + i);
+          let state = this.gameState.get(this.currentWord + "-" + i);
+
+          let letter = sub?.getValue();
+
+          if (letter === undefined) {
+            return; // TODO fix typing
+          }
+
+          guess += letter;
+        }
+
+        console.log("guess was: " + guess);
+
+        if (!this.dictionary.isWord(guess)) {
+          this.setWordColor("red");
+          return;
+        }
+
         for (let i = 1; i < this.wordlength + 1; i++) {
           const sub = this.gameBoard.get(this.currentWord + "-" + i);
           let state = this.gameState.get(this.currentWord + "-" + i);
@@ -51,6 +75,10 @@ export class GameEngineService {
         // Ignore since it's not the last entry in the word
       }
     } else if (key === "Back") {
+      if (this.currentPosition === this.wordlength + 1) {
+        this.setWordColor("clear");
+      }
+
       if (this.currentPosition > 1) {
         this.currentPosition--;
         const sub = this.gameBoard.get(this.currentWord + "-" + this.currentPosition);
@@ -64,6 +92,13 @@ export class GameEngineService {
         const sub = this.gameBoard.get(this.currentWord + "-" + this.currentPosition++);
         sub?.next(key);
       }
+    }
+  }
+
+  private setWordColor(colour: string) {
+    for (let i = 1; i < this.wordlength + 1; i++) {
+      let state = this.gameState.get(this.currentWord + "-" + i);
+      state?.next(colour);
     }
   }
 

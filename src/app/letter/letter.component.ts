@@ -14,6 +14,7 @@ export class LetterComponent implements OnInit {
   isGreen: boolean = false;
   isYellow: boolean = false;
   isGrey: boolean = false;
+  isRed: boolean = false;
 
   value$: Observable<string> = of("");
   state$: Observable<string> = of("");
@@ -23,13 +24,14 @@ export class LetterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.value$ = this.gameEngine.registerForValue(this.row,this.position);
-    this.state$ = this.gameEngine.registerForState(this.row,this.position);
+    this.value$ = this.gameEngine.registerForValue(this.row, this.position);
+    this.state$ = this.gameEngine.registerForState(this.row, this.position);
 
     this.state$.subscribe(value => {
       this.isGreen = false;
       this.isYellow = false;
       this.isGrey = false;
+      this.isRed = false;
 
       if (value === "green") {
         this.isGreen = true;
@@ -37,6 +39,8 @@ export class LetterComponent implements OnInit {
         this.isYellow = true;
       } else if (value === "grey") {
         this.isGrey = true;
+      } else if (value === "red") {
+        this.isRed = true;
       }
     })
   }
