@@ -55,6 +55,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "baseHref": "https://rettle.me/",
               "outputHashing": "all"
             },
             "development": {
