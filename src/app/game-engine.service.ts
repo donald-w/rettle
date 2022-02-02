@@ -6,7 +6,7 @@ import { DictionaryService } from './dictionary.service';
   providedIn: 'root'
 })
 export class GameEngineService {
-  word = "MONKEY"
+  word = "RETURN"
   wordlength = 6;
   currentWord = 1;
   currentPosition = 1;
