@@ -42,8 +42,6 @@ export class GameEngineService {
         if (!this.dictionary.isWord(guess)) {
           this.setWordColor("red");
 
-          navigator.share({text: "Failed guess! http://www.google.com/search?q=" + guess})
-
           return;
         }
 
@@ -96,6 +94,10 @@ export class GameEngineService {
         sub?.next(key);
       }
     }
+  }
+
+  private shareResult() {
+    navigator.share({text: "Failed guess! http://www.google.com/search?q=" + ""})
   }
 
   private setWordColor(colour: string) {
