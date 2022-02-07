@@ -13,20 +13,25 @@
   margin: 0.5rem 0.1rem;
   font-size: 30px;
   font-weight: 800;
+  transition: 1s;
 }
 
 .letter.green {
   background-color: green !important;
+  transition: 1s;
 }
 
 .letter.yellow {
   background-color: rgb(224, 196, 68) !important;
+  transition: 1s;
 }
 
 .letter.grey {
   background-color: rgb(60, 60, 60) !important;
+  transition: 1s;
 }
 
 .letter.red {
   background-color: rgb(211, 46, 46) !important;
+  transition: 1s;
 }

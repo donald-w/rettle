@@ -13,7 +13,7 @@ export class GameEngineService {
 
   gameBoard = new Map<string, BehaviorSubject<string>>();
   gameState = new Map<string, Subject<string>>();
-  keyboardState = new Map<string, Subject<string>>();
+  keyboardState = new Map<string, BehaviorSubject<string>>();
 
   constructor(private dictionary: DictionaryService) {
   }
@@ -45,9 +45,12 @@ export class GameEngineService {
           return;
         }
 
+        let result = processGuess(this.word, guess);
+
         for (let i = 1; i < this.wordlength + 1; i++) {
           const sub = this.gameBoard.get(this.currentWord + "-" + i);
           let state = this.gameState.get(this.currentWord + "-" + i);
+
 
           let letter = sub?.getValue();
 
@@ -55,19 +58,22 @@ export class GameEngineService {
             return; // TODO fix typing
           }
 
-          state?.next("grey");
-
-          if (this.word.includes(letter)) {
-            state?.next("yellow");
-            this.setKeyColor(letter, "yellow");
-          } else {
-            this.setKeyColor(letter, "dark");
+          if (result[i-1] === 'grey') {
+            if (this.getKeyColor(letter) === 'light') {
+              this.setKeyColor(letter,'dark');
+            }
+          }
+          if (result[i-1] === 'green') {
+            this.setKeyColor(letter,'green');
+          }
+          if (result[i-1] === 'yellow') {
+            if (!(this.getKeyColor(letter) === 'green')) {
+              this.setKeyColor(letter,'yellow');
+            }
           }
 
-          if (this.word.charAt(i - 1) === letter) {
-            state?.next("green")
-            this.setKeyColor(letter, "green")
-          }
+
+          state?.next(result[i-1]);
         }
 
         this.currentPosition = 1;
@@ -129,4 +135,43 @@ export class GameEngineService {
     const sub = this.keyboardState.get(key);
     sub?.next(color)
   }
+
+  getKeyColor(key: string) {
+    const sub = this.keyboardState.get(key);
+    return sub?.getValue();
+  }
 }
+
+function processGuess(word: any, guess: string) : string[] {
+  let wordArray = word.split('');
+  let guessArray = guess.split('');
+
+  let result : Array<string> = [];
+
+  for(let i = 0; i < wordArray.length; i++) {
+    let greenOrGrey = (wordArray[i] === guessArray[i]);
+    result.push(greenOrGrey ? 'green' : 'grey');
+
+    if (greenOrGrey) {
+      guessArray[i] = '.';
+      wordArray[i] = ',';
+    }
+  }
+
+  for(let i = 0; i < guessArray.length; i++) {
+    for(let j = 0; j < wordArray.length; j++) {
+      if (guessArray[i] === wordArray[j]) {
+        wordArray[j] = ',';
+        result[i] = 'yellow';
+      }
+    }
+  }
+
+  // console.log(guessArray);
+  // console.log(wordArray);
+  // console.log(result);
+
+  return result;
+
+}
+

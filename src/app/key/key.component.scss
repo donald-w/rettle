@@ -13,16 +13,20 @@ button {
 
 .green {
   background-color: green !important;
+  transition: 1s;
 }
 
 .yellow {
   background-color: rgb(224, 196, 68) !important;
+  transition: 1s;
 }
 
 .light {
   background-color: rgb(120, 120, 120) !important;
+  transition: 1s;
 }
 
 .dark {
-    background-color: rgb(40, 40, 40) !important;
+  background-color: rgb(40, 40, 40) !important;
+  transition: 1s;
 }
