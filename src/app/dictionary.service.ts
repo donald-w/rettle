@@ -20,7 +20,7 @@ export class DictionaryService {
           console.log("count: " + this.words.size);
 
         },
-        error: (error) => console.error("Could not load dictionary " + error)
+        error: (error: unknown) => console.error("Could not load dictionary " + error)
       }
     )
   }

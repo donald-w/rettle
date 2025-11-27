@@ -30,7 +30,7 @@ export class KeyComponent implements OnInit {
 
     this.keyColor$ = this.gameEngine.registerKey(this.display);
 
-    this.keyColor$.subscribe(value => {
+    this.keyColor$.subscribe((value: string) => {
       if (value === "light") {
         this.isLight = true;
         this.isDark = false;

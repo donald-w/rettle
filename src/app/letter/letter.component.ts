@@ -27,7 +27,7 @@ export class LetterComponent implements OnInit {
     this.value$ = this.gameEngine.registerForValue(this.row, this.position);
     this.state$ = this.gameEngine.registerForState(this.row, this.position);
 
-    this.state$.subscribe(value => {
+    this.state$.subscribe((value: string) => {
       this.isGreen = false;
       this.isYellow = false;
       this.isGrey = false;
