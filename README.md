@@ -1,7 +1,5 @@
 # Rettle
 
-Use https://alligator.io/angular/deploying-angular-app-to-firebase/ to deploy
-
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.4.
 
 ## Development server
