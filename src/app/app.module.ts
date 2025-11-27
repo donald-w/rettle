@@ -8,23 +8,16 @@ import { GameComponent } from './game/game.component';
 import { LetterComponent } from './letter/letter.component';
 import { KeyboardComponent } from './keyboard/keyboard.component';
 import { KeyComponent } from './key/key.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    GameComponent,
-    LetterComponent,
-    KeyboardComponent,
-    KeyComponent
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    AppRoutingModule,
-    BrowserAnimationsModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        GameComponent,
+        LetterComponent,
+        KeyboardComponent,
+        KeyComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }
