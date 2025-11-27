@@ -3,9 +3,10 @@ import { Observable, of } from 'rxjs';
 import { GameEngineService } from '../game-engine.service';
 
 @Component({
-  selector: 'app-letter',
-  templateUrl: './letter.component.html',
-  styleUrls: ['./letter.component.scss']
+    selector: 'app-letter',
+    templateUrl: './letter.component.html',
+    styleUrls: ['./letter.component.scss'],
+    standalone: false
 })
 export class LetterComponent implements OnInit {
   @Input() row = 0;

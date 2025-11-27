@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { GameEngineService } from '../game-engine.service';
 
 @Component({
-  selector: 'app-keyboard',
-  templateUrl: './keyboard.component.html',
-  styleUrls: ['./keyboard.component.scss']
+    selector: 'app-keyboard',
+    templateUrl: './keyboard.component.html',
+    styleUrls: ['./keyboard.component.scss'],
+    standalone: false
 })
 export class KeyboardComponent implements OnInit {
 

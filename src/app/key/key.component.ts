@@ -3,9 +3,10 @@ import { Observable, of } from 'rxjs';
 import { GameEngineService } from '../game-engine.service';
 
 @Component({
-  selector: 'app-key',
-  templateUrl: './key.component.html',
-  styleUrls: ['./key.component.scss']
+    selector: 'app-key',
+    templateUrl: './key.component.html',
+    styleUrls: ['./key.component.scss'],
+    standalone: false
 })
 export class KeyComponent implements OnInit {
 
