@@ -1,27 +1,24 @@
 # Rettle
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.4.
+Rettle is an Angular 21 single-page recreation of a Wordle-style game that uses six-letter guesses. Originally built over a few evenings in early 2022, it now serves as a playground for AI tooling. The project follows the default Angular CLI layout with all source under `src/` and is deployed via GitHub Pages at [mypojo.io/rettle](http://mypojo.io/rettle).
 
-## Development server
+## Project structure
+- **Routing:** The root path renders a dedicated `GameComponent`, while `AppComponent` provides the minimal shell (header plus router outlet).
+- **Core UI:** `GameComponent` builds a static 6×7 grid of `LetterComponent` tiles and hosts the on-screen `KeyboardComponent`. Each `KeyComponent` displays a label (Backspace appears as “Back”) and forwards clicks to the engine.
+- **Styles:** Global styling lives in `src/styles.scss`, and each component has scoped SCSS (e.g., `letter.component.scss`, `key.component.scss`) for sizing and color themes.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Game logic and data flow
+- **GameEngineService:** Tracks board state, keyboard colors, current row/column, and the target word. It exposes per-cell and per-key observables, handles physical and on-screen key presses, validates guesses through `DictionaryService`, colors tiles/keys via `processGuess`, advances rows, and offers a `window.tellme` debug helper to reveal the answer.
+- **DictionaryService:** Loads the word list from `assets/3of6game.txt`, provides readiness via an observable, validates guesses, and deterministically picks the “word of the day” by hashing the date into the six-letter list.
+- **Data flow:** Input travels Keyboard → `GameEngineService.keyPressed` → board/keyboard subjects → `LetterComponent` and `KeyComponent` via the `async` pipe for rendering and color updates.
 
-## Code scaffolding
+## Development
+- Run `ng serve` for a dev server at `http://localhost:4200/`; the app reloads on source changes.
+- Generate artifacts with `ng generate component|directive|pipe|service|class|guard|interface|enum|module`.
+- Build with `ng build` (output in `dist/`).
+- Run unit tests with `ng test` (Karma/Jasmine). For e2e testing, install an appropriate runner and use `ng e2e`.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Learning next
+- Explore Angular reactive patterns using the `BehaviorSubject` streams in `GameEngineService`.
+- Extend UI/UX (animations, accessibility for keyboard input, help/settings routes) by following the existing data flow.
+- Add tests around services/components using the `.spec.ts` scaffolding in `src/app`.
