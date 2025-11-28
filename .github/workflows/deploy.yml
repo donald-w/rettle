@@ -2,7 +2,7 @@ name: CI and Pages Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 permissions:
   contents: read
