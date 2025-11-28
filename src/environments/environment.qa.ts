@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  baseHref: '/rettle/',
-  deployTarget: 'prod'
+  baseHref: '/rettle-qa/',
+  deployTarget: 'qa'
 };

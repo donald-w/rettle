@@ -59,7 +59,29 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "baseHref": "https://rettle.me/",
+              "baseHref": "/rettle/",
+              "outputHashing": "all"
+            },
+            "qa": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.qa.ts"
+                }
+              ],
+              "baseHref": "/rettle-qa/",
               "outputHashing": "all"
             },
             "development": {
@@ -76,6 +98,9 @@
           "configurations": {
             "production": {
               "buildTarget": "rettle:build:production"
+            },
+            "qa": {
+              "buildTarget": "rettle:build:qa"
             },
             "development": {
               "buildTarget": "rettle:build:development"

@@ -14,6 +14,9 @@ on:
           - qa
           - prod
 
+env:
+  DEPLOY_ENV: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'qa' }}
+
 permissions:
   contents: read
   pages: write
@@ -43,8 +46,20 @@ jobs:
       - name: Run tests
         run: npm test -- --watch=false --browsers=ChromeHeadless
 
+      - name: Select build target
+        run: |
+          if [[ "${DEPLOY_ENV}" == "prod" ]]; then
+            echo "BUILD_SCRIPT=build:prod" >> "$GITHUB_ENV"
+          else
+            echo "BUILD_SCRIPT=build:qa" >> "$GITHUB_ENV"
+          fi
+        env:
+          DEPLOY_ENV: ${{ env.DEPLOY_ENV }}
+
       - name: Build for Pages
-        run: npm run build -- --configuration production --base-href "/${{ github.event.repository.name }}/"
+        run: npm run "${BUILD_SCRIPT}"
+        env:
+          BUILD_SCRIPT: ${{ env.BUILD_SCRIPT }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -52,10 +67,10 @@ jobs:
           path: dist/rettle/browser
 
   deploy:
-    name: Deploy to ${{ github.event.inputs.environment || 'qa' }}
+    name: Deploy to ${{ env.DEPLOY_ENV }}
     needs: build
     environment:
-      name: ${{ github.event.inputs.environment || 'qa' }}
+      name: ${{ env.DEPLOY_ENV }}
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
