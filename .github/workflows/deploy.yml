@@ -14,9 +14,6 @@ on:
           - qa
           - prod
 
-env:
-  DEPLOY_ENV: ${{ github.event.inputs.environment || 'qa' }}
-
 permissions:
   contents: read
   pages: write
@@ -55,10 +52,10 @@ jobs:
           path: dist/rettle/browser
 
   deploy:
-    name: Deploy to ${{ env.DEPLOY_ENV }}
+    name: Deploy to ${{ github.event.inputs.environment || 'qa' }}
     needs: build
     environment:
-      name: ${{ env.DEPLOY_ENV }}
+      name: ${{ github.event.inputs.environment || 'qa' }}
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
