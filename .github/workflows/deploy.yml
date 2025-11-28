@@ -14,9 +14,6 @@ on:
           - qa
           - prod
 
-env:
-  DEPLOY_ENV: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'qa' }}
-
 permissions:
   contents: read
   pages: write
@@ -30,6 +27,10 @@ jobs:
   build:
     name: Test and Build
     runs-on: ubuntu-latest
+    env:
+      DEPLOY_ENV: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'qa' }}
+    outputs:
+      deploy_env: ${{ steps.deploy_env.outputs.deploy_env }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,13 +54,17 @@ jobs:
           else
             echo "BUILD_SCRIPT=build:qa" >> "$GITHUB_ENV"
           fi
-        env:
-          DEPLOY_ENV: ${{ env.DEPLOY_ENV }}
 
       - name: Build for Pages
         run: npm run "${BUILD_SCRIPT}"
         env:
           BUILD_SCRIPT: ${{ env.BUILD_SCRIPT }}
+
+      - name: Set deploy env output
+        id: deploy_env
+        run: echo "deploy_env=${DEPLOY_ENV}" >> "$GITHUB_OUTPUT"
+        env:
+          DEPLOY_ENV: ${{ env.DEPLOY_ENV }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -67,10 +72,10 @@ jobs:
           path: dist/rettle/browser
 
   deploy:
-    name: Deploy to ${{ env.DEPLOY_ENV }}
+    name: Deploy to ${{ needs.build.outputs.deploy_env }}
     needs: build
     environment:
-      name: ${{ env.DEPLOY_ENV }}
+      name: ${{ needs.build.outputs.deploy_env }}
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
