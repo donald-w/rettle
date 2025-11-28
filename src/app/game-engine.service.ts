@@ -16,6 +16,16 @@ export class GameEngineService {
   keyboardState = new Map<string, BehaviorSubject<string>>();
 
   constructor(private dictionary: DictionaryService) {
+    (window as any).tellme = () => {
+      console.log("Answer is: " + this.word);
+      return this.word;
+    };
+
+    this.dictionary.dictionaryReady$.subscribe((ready) => {
+      if (ready) {
+        this.word = this.dictionary.getWordOfTheDay(new Date());
+      }
+    });
   }
 
   keyPressed(key: string): void {
@@ -174,4 +184,3 @@ function processGuess(word: any, guess: string) : string[] {
   return result;
 
 }
-

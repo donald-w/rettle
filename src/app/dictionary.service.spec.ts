@@ -6,6 +6,17 @@ import { DictionaryService } from './dictionary.service';
 describe('DictionaryService', () => {
   let service: DictionaryService;
   let httpMock: HttpTestingController;
+  const mockDictionary = [
+    'hello',
+    'return',
+    'planet',
+    'butter',
+    'sail',
+    'candle',
+    'world',
+    'bad$word',
+    '123word',
+  ].join('\n');
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -14,7 +25,7 @@ describe('DictionaryService', () => {
     service = TestBed.inject(DictionaryService);
     httpMock = TestBed.inject(HttpTestingController);
 
-    httpMock.expectOne('assets/3of6game.txt').flush('hello\nworld');
+    httpMock.expectOne('assets/3of6game.txt').flush(mockDictionary);
   });
 
   afterEach(() => {
@@ -27,7 +38,30 @@ describe('DictionaryService', () => {
 
   it('should detect words from the mocked dictionary', () => {
     expect(service.isWord('HELLO')).toBeTrue();
+    expect(service.isWord('PLANET')).toBeTrue();
     expect(service.isWord('WORLD')).toBeTrue();
     expect(service.isWord('MISSING')).toBeFalse();
+    expect(service.isWord('BAD$WORD')).toBeFalse();
+    expect(service.isWord('123WORD')).toBeFalse();
+  });
+
+  it('should mark the dictionary as ready once loaded', () => {
+    let ready: boolean | undefined;
+    service.dictionaryReady$.subscribe(value => ready = value);
+
+    expect(ready).toBeTrue();
+  });
+
+  it('should pick a deterministic word of the day', () => {
+    const date = new Date('2023-01-03T00:00:00Z');
+
+    expect(service.getWordOfTheDay(date)).toBe('PLANET');
+  });
+
+  it('should wrap around when hashing near the end of the list', () => {
+    (service as any).sixLetterWords = ['ALPHAS', 'BRAVOS'];
+
+    expect(service.getWordOfTheDay(new Date('2023-01-03T00:00:00Z'))).toBe('BRAVOS');
+    expect(service.getWordOfTheDay(new Date('2030-12-31T00:00:00Z'))).toBe('ALPHAS');
   });
 });
