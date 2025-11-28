@@ -3,7 +3,6 @@ name: CI and Pages Deploy
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -45,9 +44,11 @@ jobs:
   deploy:
     name: Deploy to prod
     needs: build
+    # GitHub Pages creates a reserved "github-pages" environment and exposes
+    # the deployed URL via the deploy-pages action's page_url output.
     environment:
-      name: prod
-      url: http://mypojo.io/rettle/
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - id: deployment
