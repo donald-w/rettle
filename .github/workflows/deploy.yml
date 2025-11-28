@@ -4,15 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      environment:
-        description: "Deploy environment (qa for auto, prod for promotion)"
-        type: choice
-        required: true
-        default: qa
-        options:
-          - qa
-          - prod
 
 permissions:
   contents: read
@@ -27,11 +18,6 @@ jobs:
   build:
     name: Test and Build
     runs-on: ubuntu-latest
-    env:
-      DEPLOY_ENV: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'qa' }}
-    outputs:
-      deploy_env: ${{ steps.deploy_env.outputs.deploy_env }}
-      deploy_url: ${{ steps.deploy_env.outputs.deploy_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,31 +34,8 @@ jobs:
       - name: Run tests
         run: npm test -- --watch=false --browsers=ChromeHeadless
 
-      - name: Select build target
-        run: |
-          if [[ "${DEPLOY_ENV}" == "prod" ]]; then
-            echo "BUILD_SCRIPT=build:prod" >> "$GITHUB_ENV"
-          else
-            echo "BUILD_SCRIPT=build:qa" >> "$GITHUB_ENV"
-          fi
-
       - name: Build for Pages
-        run: npm run "${BUILD_SCRIPT}"
-        env:
-          BUILD_SCRIPT: ${{ env.BUILD_SCRIPT }}
-
-      - name: Set deploy env output
-        id: deploy_env
-        run: |
-          if [[ "${DEPLOY_ENV}" == "prod" ]]; then
-            URL="http://mypojo.io/rettle/"
-          else
-            URL="http://mypojo.io/rettle-qa/"
-          fi
-          echo "deploy_env=${DEPLOY_ENV}" >> "$GITHUB_OUTPUT"
-          echo "deploy_url=${URL}" >> "$GITHUB_OUTPUT"
-        env:
-          DEPLOY_ENV: ${{ env.DEPLOY_ENV }}
+        run: npm run build:prod
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -80,11 +43,11 @@ jobs:
           path: dist/rettle/browser
 
   deploy:
-    name: Deploy to ${{ needs.build.outputs.deploy_env }}
+    name: Deploy to prod
     needs: build
     environment:
-      name: ${{ needs.build.outputs.deploy_env }}
-      url: ${{ needs.build.outputs.deploy_url }}
+      name: prod
+      url: http://mypojo.io/rettle/
     runs-on: ubuntu-latest
     steps:
       - id: deployment
