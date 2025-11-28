@@ -31,6 +31,7 @@ jobs:
       DEPLOY_ENV: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'qa' }}
     outputs:
       deploy_env: ${{ steps.deploy_env.outputs.deploy_env }}
+      deploy_url: ${{ steps.deploy_env.outputs.deploy_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -62,7 +63,14 @@ jobs:
 
       - name: Set deploy env output
         id: deploy_env
-        run: echo "deploy_env=${DEPLOY_ENV}" >> "$GITHUB_OUTPUT"
+        run: |
+          if [[ "${DEPLOY_ENV}" == "prod" ]]; then
+            URL="http://mypojo.io/rettle/"
+          else
+            URL="http://mypojo.io/rettle-qa/"
+          fi
+          echo "deploy_env=${DEPLOY_ENV}" >> "$GITHUB_OUTPUT"
+          echo "deploy_url=${URL}" >> "$GITHUB_OUTPUT"
         env:
           DEPLOY_ENV: ${{ env.DEPLOY_ENV }}
 
@@ -76,7 +84,7 @@ jobs:
     needs: build
     environment:
       name: ${{ needs.build.outputs.deploy_env }}
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ needs.build.outputs.deploy_url }}
     runs-on: ubuntu-latest
     steps:
       - id: deployment
