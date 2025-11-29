@@ -13,15 +13,17 @@ export class KeyboardComponent implements OnInit {
 
   ngOnInit(): void {
     document.addEventListener("keyup", event => {
-      if ("abcdefghijklmnopqrstuvwxyz".includes(event.key)) {
-        this.gameEngine.keyPressed(event.key.toUpperCase());
+      const key = event.key.toUpperCase();
+
+      if (/^[A-Z]$/.test(key)) {
+        this.gameEngine.keyPressed(key);
       }
 
-      if (event.key === "Enter") {
+      if (key === "ENTER") {
         this.gameEngine.keyPressed("Enter");
       }
 
-      if (event.key === "Backspace") {
+      if (key === "BACKSPACE") {
         this.gameEngine.keyPressed("Back");
       }
     });

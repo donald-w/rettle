@@ -3,6 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { KeyboardComponent } from './keyboard.component';
+import { GameEngineService } from '../game-engine.service';
 
 describe('KeyboardComponent', () => {
   let component: KeyboardComponent;
@@ -25,5 +26,14 @@ describe('KeyboardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should respond to uppercase keyboard events', () => {
+    const engine = TestBed.inject(GameEngineService);
+    spyOn(engine, 'keyPressed');
+
+    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'A' }));
+
+    expect(engine.keyPressed).toHaveBeenCalledWith('A');
   });
 });
