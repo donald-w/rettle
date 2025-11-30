@@ -19,7 +19,13 @@ header {
     padding: 0.25rem;
   }
 
-  .title {
+  .title-button {
     flex: 1;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-align: center;
   }
 }
