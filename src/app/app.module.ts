@@ -10,6 +10,8 @@ import { KeyboardComponent } from './keyboard/keyboard.component';
 import { KeyComponent } from './key/key.component';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HeaderComponent } from './header/header.component';
+import { HelpComponent } from './help/help.component';
+import { MenuComponent } from './menu/menu.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -17,7 +19,9 @@ import { HeaderComponent } from './header/header.component';
         LetterComponent,
         KeyboardComponent,
         KeyComponent,
-        HeaderComponent
+        HeaderComponent,
+        HelpComponent,
+        MenuComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
