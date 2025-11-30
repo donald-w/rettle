@@ -11,8 +11,7 @@ describe('KeyboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [ KeyboardComponent ],
+      imports: [HttpClientTestingModule, KeyboardComponent],
       schemas: [NO_ERRORS_SCHEMA],
     })
     .compileComponents();

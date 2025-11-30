@@ -9,8 +9,7 @@ describe('LetterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [ LetterComponent ]
+      imports: [HttpClientTestingModule, LetterComponent]
     })
     .compileComponents();
   });

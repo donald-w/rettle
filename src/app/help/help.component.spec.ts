@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HelpComponent } from './help.component';
 
-@Component({ template: '', standalone: false })
+@Component({ template: '', standalone: true })
 class DummyGameComponent {}
 
 describe('HelpComponent', () => {
@@ -16,10 +16,9 @@ describe('HelpComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HelpComponent, DummyGameComponent],
       imports: [RouterTestingModule.withRoutes([
         { path: 'game', component: DummyGameComponent }
-      ])]
+      ]), HelpComponent, DummyGameComponent]
     })
     .compileComponents();
 

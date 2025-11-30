@@ -10,8 +10,7 @@ describe('GameComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [ GameComponent ],
+      imports: [HttpClientTestingModule, GameComponent],
       schemas: [NO_ERRORS_SCHEMA],
     })
     .compileComponents();
