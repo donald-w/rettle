@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, Input, OnInit, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameEngineService } from '../game-engine.service';
 
 @Component({
@@ -20,7 +21,9 @@ export class KeyComponent implements OnInit {
   isGreen: boolean = false;
   isYellow: boolean = false;
 
-  constructor(private gameEngine: GameEngineService) { }
+  private destroyRef = inject(DestroyRef);
+
+  constructor(private gameEngine: GameEngineService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     if (this.label === "Backspace") {
@@ -31,7 +34,7 @@ export class KeyComponent implements OnInit {
 
     this.keyColor$ = this.gameEngine.registerKey(this.display);
 
-    this.keyColor$.subscribe((value: string) => {
+    this.keyColor$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: string) => {
       if (value === "light") {
         this.isLight = true;
         this.isDark = false;
@@ -58,6 +61,8 @@ export class KeyComponent implements OnInit {
           this.isYellow = true;
         }
       }
+
+      this.cdr.markForCheck();
     })
   }
 

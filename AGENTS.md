@@ -249,3 +249,6 @@ The following items may need to be added when information becomes available:
 - **Internationalization:** i18n support status
 - **Error Monitoring:** Error tracking/logging services
 - **Analytics:** Usage tracking implementation
+- **Zoneless Runtime:** The app runs without ZoneJS via `provideZonelessChangeDetection()`/`ngZone: 'noop'`; avoid reintroducing
+  the `zone.js` polyfill and prefer Angular-managed event bindings or explicit change detection cues when wiring new
+  subscriptions.

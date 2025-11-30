@@ -18,6 +18,11 @@ Rettle is an Angular 21 single-page recreation of a Wordle-style game that uses 
 - Build with `ng build` (output in `dist/`).
 - Run unit tests with `ng test` (Karma/Jasmine). For e2e testing, install an appropriate runner and use `ng e2e`.
 
+## Zoneless change detection
+- The app runs without ZoneJS using `provideZonelessChangeDetection()` and `ngZone: 'noop'`. Avoid adding `zone.js` imports and
+  rely on Angular-managed event bindings (e.g., `@HostListener`) or explicit change detector signals when subscribing to
+  observables manually.
+
 ## Learning next
 - Explore Angular reactive patterns using the `BehaviorSubject` streams in `GameEngineService`.
 - Extend UI/UX (animations, accessibility for keyboard input, help/settings routes) by following the existing data flow.

@@ -1,5 +1,6 @@
-import { Component, HostBinding, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, HostBinding, Input, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameEngineService } from '../game-engine.service';
 
 @Component({
@@ -20,7 +21,9 @@ export class LetterComponent implements OnInit {
   value$: Observable<string> = of("");
   state$: Observable<string> = of("");
 
-  constructor(private gameEngine: GameEngineService) {
+  private destroyRef = inject(DestroyRef);
+
+  constructor(private gameEngine: GameEngineService, private cdr: ChangeDetectorRef) {
 
   }
 
@@ -28,7 +31,7 @@ export class LetterComponent implements OnInit {
     this.value$ = this.gameEngine.registerForValue(this.row, this.position);
     this.state$ = this.gameEngine.registerForState(this.row, this.position);
 
-    this.state$.subscribe((value: string) => {
+    this.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: string) => {
       this.isGreen = false;
       this.isYellow = false;
       this.isGrey = false;
@@ -43,6 +46,8 @@ export class LetterComponent implements OnInit {
       } else if (value === "red") {
         this.isRed = true;
       }
+
+      this.cdr.markForCheck();
     })
   }
 
