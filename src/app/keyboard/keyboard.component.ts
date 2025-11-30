@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { GameEngineService } from '../game-engine.service';
 
 @Component({
@@ -7,25 +7,24 @@ import { GameEngineService } from '../game-engine.service';
     styleUrls: ['./keyboard.component.scss'],
     standalone: false
 })
-export class KeyboardComponent implements OnInit {
+export class KeyboardComponent {
 
   constructor(private gameEngine: GameEngineService) { }
 
-  ngOnInit(): void {
-    document.addEventListener("keyup", event => {
-      const key = event.key.toUpperCase();
+  @HostListener('window:keyup', ['$event'])
+  handlePhysicalKey(event: KeyboardEvent): void {
+    const key = event.key.toUpperCase();
 
-      if (/^[A-Z]$/.test(key)) {
-        this.gameEngine.keyPressed(key);
-      }
+    if (/^[A-Z]$/.test(key)) {
+      this.gameEngine.keyPressed(key);
+    }
 
-      if (key === "ENTER") {
-        this.gameEngine.keyPressed("Enter");
-      }
+    if (key === "ENTER") {
+      this.gameEngine.keyPressed("Enter");
+    }
 
-      if (key === "BACKSPACE") {
-        this.gameEngine.keyPressed("Back");
-      }
-    });
+    if (key === "BACKSPACE") {
+      this.gameEngine.keyPressed("Back");
+    }
   }
 }
