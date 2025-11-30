@@ -48,6 +48,7 @@ jobs:
     # the deployed URL via the deploy-pages action's page_url output.
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - id: deployment
