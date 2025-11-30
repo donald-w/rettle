@@ -106,6 +106,8 @@ UI renders tile colors and letters
 
 ### Components
 
+All app components are standalone (`standalone: true`) and declare their own `imports`.
+
 | Component | Selector | Purpose |
 |-----------|----------|---------|
 | AppComponent | `app-root` | Root shell with header and router outlet |
@@ -118,6 +120,8 @@ UI renders tile colors and letters
 | MenuComponent | `app-menu` | Placeholder menu/settings page with back-to-game control |
 
 ### Routing
+
+Routes are exported from `src/app/app-routing.module.ts` as `routes` (no NgModule); `provideRouter(routes, withHashLocation())` is configured in `src/main.ts`.
 
 - `/` → redirects to `/game`
 - `/game` → `GameComponent`
@@ -139,7 +143,9 @@ UI renders tile colors and letters
 
 ### Angular
 
-- Components use `standalone: false` (NgModule-based)
+- Standalone bootstrap via `bootstrapApplication` in `src/main.ts`; no `AppModule`.
+- Routes are provided with `provideRouter(routes, withHashLocation())`.
+- Animations enabled with `provideAnimations()`; HTTP via `provideHttpClient(withInterceptorsFromDi())`.
 - Use `@Input()` decorators for component inputs
 - Use RxJS `BehaviorSubject` for state management
 - Subscribe to observables in `ngOnInit()`, display via `async` pipe when possible
