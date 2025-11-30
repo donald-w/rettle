@@ -8,24 +8,3 @@
   height: 100vh;
   overflow: hidden;
 }
-
-header {
-  display: flex;
-  text-align: center;
-  color: white;
-  font-size: 2rem;
-  font-weight: bold;
-  padding: 0.5rem;
-
-  .menu {
-    flex-basis: auto;
-  }
-
-  .title {
-    flex-basis: 100%;
-  }
-
-  .help {
-    flex-basis: auto;
-  }
-}

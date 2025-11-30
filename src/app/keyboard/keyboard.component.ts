@@ -11,7 +11,7 @@ export class KeyboardComponent {
 
   constructor(private gameEngine: GameEngineService) { }
 
-  @HostListener('window:keyup', ['$event'])
+  @HostListener('document:keyup', ['$event'])
   handlePhysicalKey(event: KeyboardEvent): void {
     const key = event.key.toUpperCase();
 

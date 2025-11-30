@@ -9,13 +9,15 @@ import { LetterComponent } from './letter/letter.component';
 import { KeyboardComponent } from './keyboard/keyboard.component';
 import { KeyComponent } from './key/key.component';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({ declarations: [
         AppComponent,
         GameComponent,
         LetterComponent,
         KeyboardComponent,
-        KeyComponent
+        KeyComponent,
+        HeaderComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
