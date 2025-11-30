@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This document provides context and instructions for AI coding agents (such as GitHub Copilot, Cursor, or similar tools) when working in this repository.
+This document provides context and instructions for AI coding agents (such as GitHub Copilot, Windsurf, OpenAI Codex, or similar tools) when working in this repository.
 
 ## Project Overview
 
