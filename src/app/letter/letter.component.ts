@@ -2,12 +2,14 @@ import { ChangeDetectorRef, Component, DestroyRef, HostBinding, Input, OnInit, V
 import { Observable, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameEngineService } from '../game-engine.service';
+import { NgClass, AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'app-letter',
     templateUrl: './letter.component.html',
     styleUrls: ['./letter.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [NgClass, AsyncPipe]
 })
 export class LetterComponent implements OnInit {
   @Input() row = 0;

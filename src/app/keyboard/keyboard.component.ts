@@ -1,11 +1,13 @@
 import { Component, HostListener } from '@angular/core';
 import { GameEngineService } from '../game-engine.service';
+import { KeyComponent } from '../key/key.component';
 
 @Component({
     selector: 'app-keyboard',
     templateUrl: './keyboard.component.html',
     styleUrls: ['./keyboard.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [KeyComponent]
 })
 export class KeyboardComponent {
 

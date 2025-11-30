@@ -2,12 +2,14 @@ import { ChangeDetectorRef, Component, DestroyRef, Input, OnInit, inject } from 
 import { Observable, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameEngineService } from '../game-engine.service';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-key',
     templateUrl: './key.component.html',
     styleUrls: ['./key.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [NgClass]
 })
 export class KeyComponent implements OnInit {
 
