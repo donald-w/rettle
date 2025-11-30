@@ -124,18 +124,35 @@ export class GameEngineService {
   }
 
   registerForValue(word: number, position: number): Observable<string> {
+    const key = word + "-" + position;
+    const existing = this.gameBoard.get(key);
+    if (existing) {
+      return existing;
+    }
+
     const sub = new BehaviorSubject<string>("");
-    this.gameBoard.set(word + "-" + position, sub)
+    this.gameBoard.set(key, sub);
     return sub;
   }
 
   registerForState(word: number, position: number): Observable<string> {
+    const key = word + "-" + position;
+    const existing = this.gameState.get(key);
+    if (existing) {
+      return existing;
+    }
+
     const sub = new BehaviorSubject<string>("black");
-    this.gameState.set(word + "-" + position, sub)
+    this.gameState.set(key, sub);
     return sub;
   }
 
   registerKey(key: string): Observable<string> {
+    const existing = this.keyboardState.get(key);
+    if (existing) {
+      return existing;
+    }
+
     const sub = new BehaviorSubject<string>("light");
     this.keyboardState.set(key, sub);
     return sub;

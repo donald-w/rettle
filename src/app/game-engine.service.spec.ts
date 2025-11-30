@@ -54,4 +54,24 @@ describe('GameEngineService', () => {
     expect(answer).toBe('PLANET');
     expect(console.log).toHaveBeenCalledWith('Answer is: ' + 'PLANET');
   });
+
+  it('should preserve cell state when registering the same position again', () => {
+    const first = service.registerForValue(1, 1) as BehaviorSubject<string>;
+    first.next('A');
+
+    const values: string[] = [];
+    service.registerForValue(1, 1).subscribe((value) => values.push(value));
+
+    expect(values[0]).toBe('A');
+  });
+
+  it('should preserve key state when registering the same key again', () => {
+    const first = service.registerKey('Q') as BehaviorSubject<string>;
+    first.next('green');
+
+    const states: string[] = [];
+    service.registerKey('Q').subscribe((value) => states.push(value));
+
+    expect(states[0]).toBe('green');
+  });
 });

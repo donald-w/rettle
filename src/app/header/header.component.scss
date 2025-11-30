@@ -5,16 +5,21 @@ header {
   font-size: 2rem;
   font-weight: bold;
   padding: 0.5rem;
+  align-items: center;
+  gap: 0.5rem;
 
-  .menu {
-    flex-basis: auto;
+  .icon-button {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
   }
 
   .title {
-    flex-basis: 100%;
-  }
-
-  .help {
-    flex-basis: auto;
+    flex: 1;
   }
 }
