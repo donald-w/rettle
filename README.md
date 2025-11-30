@@ -1,6 +1,6 @@
 # Rettle
 
-Rettle is an Angular 21 single-page recreation of a Wordle-style game that uses six-letter guesses. Originally built over a few evenings in early 2022, it now serves as a playground for AI tooling. The project follows the default Angular CLI layout with all source under `src/` and is deployed via GitHub Pages at [mypojo.io/rettle](https://mypojo.io/rettle).
+Rettle is an Angular 21 single-page recreation of a popular word guessing game that uses six-letter guesses. Originally built over a few evenings in early 2022, it now serves as a playground for AI tooling. The project follows the default Angular CLI layout with all source under `src/` and is deployed via GitHub Pages at [mypojo.io/rettle](https://mypojo.io/rettle).
 
 ## Project structure
 - **Bootstrap:** The app uses the standalone `bootstrapApplication` API with `provideRouter(routes, withHashLocation())`, `provideHttpClient(withInterceptorsFromDi())`, `provideAnimations()`, and `provideZonelessChangeDetection()` configured in `src/main.ts`.
