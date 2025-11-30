@@ -4,7 +4,7 @@ This document provides context and instructions for AI coding agents (such as Gi
 
 ## Project Overview
 
-**Rettle** is an Angular 21 single-page web application that recreates a popular word guessing game with six-letter words. The game provides seven attempts to guess the daily word. Originally built in early 2022, it now serves as a playground for AI tooling experiments.
+**Rettle** is an Angular 21 single-page web application word guessing game with six-letter words. The game provides seven attempts to guess the daily word. Originally built in early 2022, it now serves as a playground for AI tooling experiments.
 
 - **Live site:** [mypojo.io/rettle](https://mypojo.io/rettle)
 - **License:** Apache 2.0
