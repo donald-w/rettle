@@ -21,6 +21,7 @@ This document provides context and instructions for AI coding agents (such as Gi
 │   │   ├── key/                # Individual keyboard key component
 │   │   ├── keyboard/           # On-screen keyboard component
 │   │   ├── letter/             # Grid tile component
+│   │   ├── header/             # Top header bar component
 │   │   ├── app.component.*     # Root app shell
 │   │   ├── app.module.ts       # NgModule declarations
 │   │   ├── app-routing.module.ts # Route definitions
@@ -110,6 +111,7 @@ UI renders tile colors and letters
 | LetterComponent | `app-letter` | Individual tile displaying letter and color state |
 | KeyboardComponent | `app-keyboard` | On-screen QWERTY keyboard, handles physical key events |
 | KeyComponent | `app-key` | Individual keyboard key with click handler |
+| HeaderComponent | `app-header` | Top bar with centered title and surrounding icons |
 
 ### Routing
 
