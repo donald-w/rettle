@@ -1,0 +1,251 @@
+# AGENTS.md
+
+This document provides context and instructions for AI coding agents (such as GitHub Copilot, Cursor, or similar tools) when working in this repository.
+
+## Project Overview
+
+**Rettle** is an Angular 21 single-page web application that recreates a Wordle-style word-guessing game with six-letter words. The game provides seven attempts to guess the daily word. Originally built in early 2022, it now serves as a playground for AI tooling experiments.
+
+- **Live site:** [mypojo.io/rettle](http://mypojo.io/rettle)
+- **License:** Apache 2.0
+- **Primary Language:** TypeScript
+- **Framework:** Angular 21
+
+## Repository Layout
+
+```
+/
+├── src/
+│   ├── app/
+│   │   ├── game/               # Main game board component
+│   │   ├── key/                # Individual keyboard key component
+│   │   ├── keyboard/           # On-screen keyboard component
+│   │   ├── letter/             # Grid tile component
+│   │   ├── app.component.*     # Root app shell
+│   │   ├── app.module.ts       # NgModule declarations
+│   │   ├── app-routing.module.ts # Route definitions
+│   │   ├── dictionary.service.ts # Word list loading and validation
+│   │   └── game-engine.service.ts # Core game logic and state
+│   ├── assets/
+│   │   └── 3of6game.txt        # Dictionary word list
+│   ├── environments/           # Environment configs (dev/prod)
+│   ├── index.html              # Entry HTML
+│   ├── main.ts                 # Angular bootstrap
+│   ├── polyfills.ts            # Browser polyfills
+│   ├── styles.scss             # Global styles
+│   └── test.ts                 # Karma test setup
+├── .github/
+│   └── workflows/
+│       └── deploy.yml          # CI/CD: test → build → deploy to GitHub Pages
+├── angular.json                # Angular CLI configuration
+├── karma.conf.js               # Karma test runner config
+├── package.json                # Dependencies and scripts
+├── tsconfig.json               # Base TypeScript config
+├── tsconfig.app.json           # App-specific TS config
+├── tsconfig.spec.json          # Test-specific TS config
+└── .editorconfig               # Editor formatting rules
+```
+
+## Development Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm ci` | Install dependencies (clean install) |
+| `npm start` or `ng serve` | Start dev server at `http://localhost:4200/` |
+| `npm run build` | Production build (output to `dist/rettle/`) |
+| `npm test` | Run unit tests with Karma/Jasmine (ChromeHeadless, no watch) |
+| `ng generate component <name>` | Scaffold a new component |
+| `ng generate service <name>` | Scaffold a new service |
+
+### Running Tests
+
+```bash
+npm test  # Runs: ng test --watch=false --browsers=ChromeHeadless
+```
+
+All 16 tests should pass. Tests use:
+- **Jasmine** for assertions and test structure
+- **Karma** as the test runner
+- **HttpClientTestingModule** for mocking HTTP requests
+- **RouterTestingModule** for routing tests
+
+## Architecture
+
+### Core Data Flow
+
+```
+User Input (keyboard/click)
+        ↓
+KeyboardComponent / KeyComponent
+        ↓
+GameEngineService.keyPressed(key)
+        ↓
+BehaviorSubject updates (gameBoard, gameState, keyboardState)
+        ↓
+LetterComponent / KeyComponent (via async pipe)
+        ↓
+UI renders tile colors and letters
+```
+
+### Key Services
+
+- **GameEngineService** (`game-engine.service.ts`)
+  - Tracks board state, current row/column, and target word
+  - Exposes `BehaviorSubject` observables for each cell and key
+  - Handles input via `keyPressed(key)`, validates guesses, colors tiles/keys
+  - Provides `window.tellme()` debug helper to reveal the answer
+
+- **DictionaryService** (`dictionary.service.ts`)
+  - Loads word list from `assets/3of6game.txt` on initialization
+  - Filters to six-letter alphabetic words
+  - Provides `isWord(word)` for guess validation
+  - Provides `getWordOfTheDay(date)` using deterministic date-based hashing
+
+### Components
+
+| Component | Selector | Purpose |
+|-----------|----------|---------|
+| AppComponent | `app-root` | Root shell with header and router outlet |
+| GameComponent | `app-game` | Renders 6×7 grid of letter tiles + keyboard |
+| LetterComponent | `app-letter` | Individual tile displaying letter and color state |
+| KeyboardComponent | `app-keyboard` | On-screen QWERTY keyboard, handles physical key events |
+| KeyComponent | `app-key` | Individual keyboard key with click handler |
+
+### Routing
+
+- `/` → redirects to `/game`
+- `/game` → `GameComponent`
+
+## Code Style & Conventions
+
+### TypeScript
+
+- **Strict mode enabled** (`strict: true` in tsconfig)
+- Use **single quotes** for strings
+- Use **2-space indentation**
+- **No trailing whitespace** (except in `.md` files)
+- Insert **final newline** in all files
+- Follow Angular style guide naming conventions:
+  - `*.component.ts`, `*.service.ts`, `*.spec.ts`
+  - PascalCase for classes, camelCase for methods/properties
+
+### Angular
+
+- Components use `standalone: false` (NgModule-based)
+- Use `@Input()` decorators for component inputs
+- Use RxJS `BehaviorSubject` for state management
+- Subscribe to observables in `ngOnInit()`, display via `async` pipe when possible
+- Use SCSS for component styles (scoped per component)
+
+### Testing
+
+- Each component/service has a corresponding `.spec.ts` file
+- Use `TestBed.configureTestingModule()` for test setup
+- Mock services with `jasmine.createSpy()` and custom mock objects
+- Use `HttpClientTestingModule` for HTTP mocking
+- Prefer `expect(...).toBeTrue()`, `expect(...).toBeFalse()` for booleans
+
+## Common Tasks
+
+### Adding a New Component
+
+```bash
+ng generate component component-name
+```
+
+Then:
+1. The component will be automatically added to `app.module.ts` declarations
+2. Add styles in `component-name.component.scss`
+3. Create tests in `component-name.component.spec.ts`
+
+### Adding a New Service
+
+```bash
+ng generate service service-name
+```
+
+Services are `providedIn: 'root'` by default (singleton).
+
+### Modifying Game Logic
+
+- Edit `GameEngineService` for core logic changes
+- The `processGuess()` function handles letter coloring (green/yellow/grey)
+- State is managed via `BehaviorSubject` maps
+
+### Updating the Word List
+
+- Edit `src/assets/3of6game.txt`
+- One word per line, only alphabetic characters
+- `DictionaryService` filters to 6-letter words automatically
+
+## Dos and Don'ts
+
+### Do
+
+- ✅ Run `npm test` before committing to ensure tests pass
+- ✅ Follow existing patterns for components and services
+- ✅ Use RxJS observables and the `async` pipe for reactive state
+- ✅ Keep component logic minimal; delegate to services
+- ✅ Add corresponding `.spec.ts` tests for new code
+- ✅ Use strict TypeScript typing
+
+### Don't
+
+- ❌ Don't bypass TypeScript strict mode or add `any` types unnecessarily
+- ❌ Don't commit build artifacts (`dist/`) or `node_modules/`
+- ❌ Don't add inline styles; use component SCSS files
+- ❌ Don't modify `angular.json` without understanding build implications
+- ❌ Don't hardcode environment-specific values; use `src/environments/`
+
+## CI/CD
+
+The GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on push to `main`:
+
+1. **Checkout** the repository
+2. **Setup Node.js 20** with npm cache
+3. **Install dependencies** with `npm ci`
+4. **Run tests** with `npm test`
+5. **Build for production** with `npm run build:prod`
+6. **Deploy to GitHub Pages** (output at `dist/rettle/browser`)
+
+## Environment Configuration
+
+| File | Purpose |
+|------|---------|
+| `src/environments/environment.ts` | Local development settings |
+| `src/environments/environment.prod.ts` | Production settings (baseHref: `/rettle/`) |
+
+## Dependencies
+
+### Runtime
+- Angular 21 (core, router, forms, animations, http)
+- RxJS 7.x
+- normalize.css
+
+### Development
+- TypeScript 5.9
+- Karma + Jasmine (testing)
+- Angular CLI
+
+## Additional Notes
+
+- The game uses a deterministic "word of the day" based on date hashing
+- Debug helper: In browser console, call `window.tellme()` to reveal the answer
+- The grid is 6 columns (letters) × 7 rows (attempts)
+
+---
+
+## TBD (To Be Determined)
+
+The following items may need to be added when information becomes available:
+
+- **Contributing Guidelines:** Contribution workflow, PR requirements
+- **Code Review Requirements:** Required approvals, automated checks
+- **Browser Support Matrix:** Officially supported browsers
+- **Accessibility Guidelines:** WCAG compliance requirements
+- **Performance Budgets:** Beyond Angular defaults
+- **E2E Testing Setup:** End-to-end test framework (currently not configured)
+- **Feature Flags:** Feature toggle system (if any)
+- **Internationalization:** i18n support status
+- **Error Monitoring:** Error tracking/logging services
+- **Analytics:** Usage tracking implementation
