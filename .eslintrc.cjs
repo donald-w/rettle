@@ -28,6 +28,7 @@ module.exports = {
             varsIgnorePattern: '^_'
           }
         ],
+        '@typescript-eslint/no-deprecated': 'error',
         'no-console': ['warn', { allow: ['warn', 'error'] }],
         'prefer-const': 'warn'
       }
