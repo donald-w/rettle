@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideLocationMocks } from '@angular/common/testing';
+import { provideRouter } from '@angular/router';
 import { HelpComponent } from './help.component';
 
 @Component({ template: '', standalone: true })
@@ -16,9 +17,11 @@ describe('HelpComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([
-        { path: 'game', component: DummyGameComponent }
-      ]), HelpComponent, DummyGameComponent]
+      imports: [HelpComponent, DummyGameComponent],
+      providers: [
+        provideRouter([{ path: 'game', component: DummyGameComponent }]),
+        provideLocationMocks(),
+      ]
     })
     .compileComponents();
 

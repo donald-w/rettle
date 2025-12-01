@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideLocationMocks } from '@angular/common/testing';
+import { provideRouter } from '@angular/router';
 import { HeaderComponent } from './header.component';
 
 @Component({ template: '', standalone: true })
@@ -16,12 +17,16 @@ describe('HeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([
-        { path: '', redirectTo: 'game', pathMatch: 'full' },
-        { path: 'game', component: DummyComponent },
-        { path: 'help', component: DummyComponent },
-        { path: 'menu', component: DummyComponent }
-      ]), HeaderComponent, DummyComponent]
+      imports: [HeaderComponent, DummyComponent],
+      providers: [
+        provideRouter([
+          { path: '', redirectTo: 'game', pathMatch: 'full' },
+          { path: 'game', component: DummyComponent },
+          { path: 'help', component: DummyComponent },
+          { path: 'menu', component: DummyComponent },
+        ]),
+        provideLocationMocks(),
+      ]
     })
     .compileComponents();
 

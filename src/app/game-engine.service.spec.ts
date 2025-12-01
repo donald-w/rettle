@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { BehaviorSubject } from 'rxjs';
 
 import { GameEngineService } from './game-engine.service';
@@ -23,8 +23,8 @@ describe('GameEngineService', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
       providers: [
+        provideHttpClientTesting(),
         {
           provide: DictionaryService,
           useValue: mockDictionary,

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { GameComponent } from './game.component';
 
@@ -10,7 +10,8 @@ describe('GameComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, GameComponent],
+      imports: [GameComponent],
+      providers: [provideHttpClientTesting()],
       schemas: [NO_ERRORS_SCHEMA],
     })
     .compileComponents();
