@@ -15,8 +15,6 @@ export class DictionaryService {
     this.getTextFile("assets/3of6game.txt").subscribe(
       {
         next: (data: string) => {
-          console.log("Dictionary received");
-
           data.split(/\r?\n/).forEach(
             word => {
               const cleanWord = word.trim().toUpperCase();
@@ -34,7 +32,6 @@ export class DictionaryService {
             }
           );
 
-          console.log("count: " + this.words.size);
           this.dictionaryReadySubject.next(true);
 
         },

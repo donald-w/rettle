@@ -52,7 +52,6 @@ describe('GameEngineService', () => {
     const answer = (window as any).tellme();
 
     expect(answer).toBe('PLANET');
-    expect(console.log).toHaveBeenCalledWith('Answer is: ' + 'PLANET');
   });
 
   it('should preserve cell state when registering the same position again', () => {

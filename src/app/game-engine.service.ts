@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { DictionaryService } from './dictionary.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameEngineService {
-  word = "RETURN"
+  word: string = "";
   wordlength = 6;
   currentWord = 1;
   currentPosition = 1;
@@ -16,8 +16,8 @@ export class GameEngineService {
   keyboardState = new Map<string, BehaviorSubject<string>>();
 
   constructor(private dictionary: DictionaryService) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).tellme = () => {
-      console.log("Answer is: " + this.word);
       return this.word;
     };
 
@@ -36,9 +36,8 @@ export class GameEngineService {
 
         for (let i = 1; i < this.wordlength + 1; i++) {
           const sub = this.gameBoard.get(this.currentWord + "-" + i);
-          let state = this.gameState.get(this.currentWord + "-" + i);
 
-          let letter = sub?.getValue();
+          const letter = sub?.getValue();
 
           if (letter === undefined) {
             return; // TODO fix typing
@@ -47,6 +46,7 @@ export class GameEngineService {
           guess += letter;
         }
 
+        // eslint-disable-next-line no-console
         console.log("guess was: " + guess);
 
         if (!this.dictionary.isWord(guess)) {
@@ -55,14 +55,14 @@ export class GameEngineService {
           return;
         }
 
-        let result = processGuess(this.word, guess);
+        const result = processGuess(this.word, guess);
 
         for (let i = 1; i < this.wordlength + 1; i++) {
           const sub = this.gameBoard.get(this.currentWord + "-" + i);
-          let state = this.gameState.get(this.currentWord + "-" + i);
+          const state = this.gameState.get(this.currentWord + "-" + i);
 
 
-          let letter = sub?.getValue();
+          const letter = sub?.getValue();
 
           if (letter === undefined) {
             return; // TODO fix typing
@@ -118,7 +118,7 @@ export class GameEngineService {
 
   private setWordColor(colour: string) {
     for (let i = 1; i < this.wordlength + 1; i++) {
-      let state = this.gameState.get(this.currentWord + "-" + i);
+      const state = this.gameState.get(this.currentWord + "-" + i);
       state?.next(colour);
     }
   }
@@ -169,14 +169,14 @@ export class GameEngineService {
   }
 }
 
-function processGuess(word: any, guess: string) : string[] {
-  let wordArray = word.split('');
-  let guessArray = guess.split('');
+function processGuess(word: string, guess: string) : string[] {
+  const wordArray = word.split('');
+  const guessArray = guess.split('');
 
-  let result : Array<string> = [];
+  const result : Array<string> = [];
 
   for(let i = 0; i < wordArray.length; i++) {
-    let greenOrGrey = (wordArray[i] === guessArray[i]);
+    const greenOrGrey = (wordArray[i] === guessArray[i]);
     result.push(greenOrGrey ? 'green' : 'grey');
 
     if (greenOrGrey) {

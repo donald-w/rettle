@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { LetterComponent } from '../letter/letter.component';
 import { KeyboardComponent } from '../keyboard/keyboard.component';
 
@@ -9,9 +9,6 @@ import { KeyboardComponent } from '../keyboard/keyboard.component';
     standalone: true,
     imports: [LetterComponent, KeyboardComponent]
 })
-export class GameComponent implements OnInit {
+export class GameComponent {
   constructor() { }
-
-  ngOnInit(): void {
-  }
 }
