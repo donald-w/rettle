@@ -4,7 +4,17 @@
   justify-content: space-between;
   background-color: black;
   color: white;
-  width: 100vw;
-  height: 100dvh;
-  overflow: hidden;
+
+  /* Use normal layout width */
+  width: 100%;
+
+  /* Let it fill the page, but allow it to grow if content is taller */
+  min-height: 100%;
+
+  /* Allow scroll instead of hard clipping */
+  overflow: auto;
+
+  /* Play nice with notches / home indicator */
+  box-sizing: border-box;
+  padding-bottom: env(safe-area-inset-bottom);
 }
