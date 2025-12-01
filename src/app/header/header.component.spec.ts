@@ -1,40 +1,29 @@
-import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { provideLocationMocks } from '@angular/common/testing';
-import { provideRouter } from '@angular/router';
+import { By } from '@angular/platform-browser';
 import { HeaderComponent } from './header.component';
-
-@Component({ template: '', standalone: true })
-class DummyComponent {}
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
-  let router: Router;
-  let location: Location;
+  let routerNavigateSpy: jasmine.Spy;
+  let activeRoute: string;
 
   beforeEach(async () => {
+    activeRoute = '/game';
+    const mockRouter: Partial<Router> = {
+      navigate: routerNavigateSpy = jasmine.createSpy('navigate'),
+      isActive: (url: string) => url === activeRoute,
+    };
+
     await TestBed.configureTestingModule({
-      imports: [HeaderComponent, DummyComponent],
-      providers: [
-        provideRouter([
-          { path: '', redirectTo: 'game', pathMatch: 'full' },
-          { path: 'game', component: DummyComponent },
-          { path: 'help', component: DummyComponent },
-          { path: 'menu', component: DummyComponent },
-        ]),
-        provideLocationMocks(),
-      ]
+      imports: [HeaderComponent],
+      providers: [{ provide: Router, useValue: mockRouter }],
     })
     .compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
-    router = TestBed.inject(Router);
-    location = TestBed.inject(Location);
-    router.initialNavigation();
     fixture.detectChanges();
   });
 
@@ -47,36 +36,50 @@ describe('HeaderComponent', () => {
     expect(compiled.querySelector('header .title-button')?.textContent?.trim()).toBe('RETTLE');
   });
 
-  it('should navigate to game when menu is clicked on menu page', async () => {
-    await router.navigate(['/menu']);
+  it('should navigate to menu when menu icon clicked from game', () => {
+    activeRoute = '/game';
     fixture.detectChanges();
 
-    const menuButton: HTMLButtonElement | null = fixture.nativeElement.querySelector('button[aria-label="Menu"]');
-    menuButton?.click();
-    await fixture.whenStable();
+    const menuButton = fixture.debugElement.query(By.css('button[aria-label="Menu"]')).nativeElement as HTMLButtonElement;
+    menuButton.click();
 
-    expect(location.path()).toBe('/game');
+    expect(routerNavigateSpy).toHaveBeenCalledWith(['/menu']);
   });
 
-  it('should navigate to game when help is clicked on help page', async () => {
-    await router.navigate(['/help']);
+  it('should navigate to game when menu icon clicked from menu', () => {
+    activeRoute = '/menu';
     fixture.detectChanges();
 
-    const helpButton: HTMLButtonElement | null = fixture.nativeElement.querySelector('button[aria-label="Help"]');
-    helpButton?.click();
-    await fixture.whenStable();
+    const menuButton = fixture.debugElement.query(By.css('button[aria-label="Menu"]')).nativeElement as HTMLButtonElement;
+    menuButton.click();
 
-    expect(location.path()).toBe('/game');
+    expect(routerNavigateSpy).toHaveBeenCalledWith(['/game']);
   });
 
-  it('should navigate to game when title is clicked', async () => {
-    await router.navigate(['/menu']);
+  it('should navigate to help when help icon clicked from game', () => {
+    activeRoute = '/game';
     fixture.detectChanges();
 
-    const titleButton: HTMLButtonElement | null = fixture.nativeElement.querySelector('button.title-button');
-    titleButton?.click();
-    await fixture.whenStable();
+    const helpButton = fixture.debugElement.query(By.css('button[aria-label="Help"]')).nativeElement as HTMLButtonElement;
+    helpButton.click();
 
-    expect(location.path()).toBe('/game');
+    expect(routerNavigateSpy).toHaveBeenCalledWith(['/help']);
+  });
+
+  it('should navigate to game when help icon clicked from help', () => {
+    activeRoute = '/help';
+    fixture.detectChanges();
+
+    const helpButton = fixture.debugElement.query(By.css('button[aria-label="Help"]')).nativeElement as HTMLButtonElement;
+    helpButton.click();
+
+    expect(routerNavigateSpy).toHaveBeenCalledWith(['/game']);
+  });
+
+  it('should navigate to game when title is clicked', () => {
+    const titleButton = fixture.debugElement.query(By.css('button.title-button')).nativeElement as HTMLButtonElement;
+    titleButton.click();
+
+    expect(routerNavigateSpy).toHaveBeenCalledWith(['/game']);
   });
 });
