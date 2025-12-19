@@ -2,6 +2,9 @@
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
 module.exports = function (config) {
+  const isDevcontainer = process.env.RETTLE_DEVCONTAINER === '1' || process.env.CODESPACES === 'true';
+  const browsers = isDevcontainer ? ['ChromeHeadlessNoSandbox'] : ['ChromeHeadless'];
+
   config.set({
     basePath: '',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
@@ -10,7 +13,7 @@ module.exports = function (config) {
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),
-      
+
     ],
     client: {
       jasmine: {
@@ -37,7 +40,15 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    customLaunchers: isDevcontainer
+      ? {
+          ChromeHeadlessNoSandbox: {
+            base: 'ChromeHeadless',
+            flags: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+          }
+        }
+      : {},
+    browsers,
     singleRun: false,
     restartOnFileChange: true
   });

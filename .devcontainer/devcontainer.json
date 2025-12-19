@@ -1,0 +1,32 @@
+{
+  "name": "rettle (Angular)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "node",
+  "remoteEnv": {
+    "CHROME_BIN": "/usr/bin/chromium"
+    ,
+    "RETTLE_DEVCONTAINER": "1"
+  },
+  "postCreateCommand": "npm ci",
+  "forwardPorts": [4200, 9876],
+  "portsAttributes": {
+    "4200": {
+      "label": "Angular dev server",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "9876": {
+      "label": "Karma"
+    }
+  },
+  "runArgs": ["--shm-size=1g"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "angular.ng-template",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  }
+}
