@@ -17,21 +17,21 @@
 }
 
 .letter.green {
-  background-color: green !important;
+  background-color: var(--rettle-correct) !important;
   transition: 1s;
 }
 
 .letter.yellow {
-  background-color: rgb(224, 196, 68) !important;
+  background-color: var(--rettle-present) !important;
   transition: 1s;
 }
 
 .letter.grey {
-  background-color: rgb(60, 60, 60) !important;
+  background-color: var(--rettle-absent) !important;
   transition: 1s;
 }
 
 .letter.red {
-  background-color: rgb(211, 46, 46) !important;
+  background-color: var(--rettle-error) !important;
   transition: 1s;
 }

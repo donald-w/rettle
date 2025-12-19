@@ -6,19 +6,35 @@ import { RouterLink } from '@angular/router';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
 import { MenuComponent } from './menu.component';
+import { SettingsService } from '../settings.service';
+import { BehaviorSubject } from 'rxjs';
 
 describe('MenuComponent', () => {
   let component: MenuComponent;
   let fixture: ComponentFixture<MenuComponent>;
   let router: Router;
   let location: Location;
+  let colourAccessibilityModeSubject: BehaviorSubject<boolean>;
+  let settingsServiceSpy: jasmine.SpyObj<Pick<SettingsService, 'setColourAccessibilityMode'>>;
 
   beforeEach(async () => {
+    colourAccessibilityModeSubject = new BehaviorSubject<boolean>(false);
+    settingsServiceSpy = jasmine.createSpyObj<Pick<SettingsService, 'setColourAccessibilityMode'>>('SettingsService', [
+      'setColourAccessibilityMode',
+    ]);
+
     await TestBed.configureTestingModule({
       imports: [MenuComponent],
       providers: [
         provideRouter([{ path: 'game', component: MenuComponent }]),
         provideLocationMocks(),
+        {
+          provide: SettingsService,
+          useValue: {
+            colourAccessibilityMode$: colourAccessibilityModeSubject.asObservable(),
+            setColourAccessibilityMode: settingsServiceSpy.setColourAccessibilityMode,
+          },
+        },
       ],
     })
     .compileComponents();
@@ -54,5 +70,29 @@ describe('MenuComponent', () => {
     await fixture.whenStable();
 
     expect(location.path()).toBe('/game');
+  });
+
+  it('should render the colour accessibility mode toggle', () => {
+    const native = fixture.nativeElement as HTMLElement;
+    expect(native.textContent).toContain('Colour accessibility mode');
+    expect(native.querySelector('input[type="checkbox"]')).toBeTruthy();
+  });
+
+  it('should reflect the current toggle value', () => {
+    const input = fixture.nativeElement.querySelector('input[type="checkbox"]') as HTMLInputElement;
+    expect(input.checked).toBeFalse();
+
+    colourAccessibilityModeSubject.next(true);
+    fixture.detectChanges();
+    expect(input.checked).toBeTrue();
+  });
+
+  it('should call SettingsService when toggle changes', () => {
+    const input = fixture.nativeElement.querySelector('input[type="checkbox"]') as HTMLInputElement;
+    input.checked = true;
+    input.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    expect(settingsServiceSpy.setColourAccessibilityMode).toHaveBeenCalledWith(true);
   });
 });

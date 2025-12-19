@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper" [class.colour-accessibility-mode]="(settingsService.colourAccessibilityMode$ | async)">
   <app-header></app-header>
   <router-outlet></router-outlet>
 </div>

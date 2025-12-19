@@ -20,3 +20,18 @@ body {
   background-color: black;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+:root {
+  --rettle-correct: green;
+  --rettle-present: rgb(224, 196, 68);
+  --rettle-absent: rgb(60, 60, 60);
+  --rettle-error: rgb(211, 46, 46);
+}
+
+.colour-accessibility-mode {
+  /* Alternate palette aimed to be more distinguishable for common colour-vision differences */
+  --rettle-correct: rgb(44, 125, 212); /* blue */
+  --rettle-present: rgb(230, 140, 35); /* orange */
+  --rettle-absent: rgb(60, 60, 60);
+  --rettle-error: rgb(211, 46, 46);
+}

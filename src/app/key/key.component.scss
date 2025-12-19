@@ -12,12 +12,12 @@ button {
 }
 
 .green {
-  background-color: green !important;
+  background-color: var(--rettle-correct) !important;
   transition: 1s;
 }
 
 .yellow {
-  background-color: rgb(224, 196, 68) !important;
+  background-color: var(--rettle-present) !important;
   transition: 1s;
 }
 
