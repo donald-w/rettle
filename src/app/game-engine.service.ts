@@ -40,6 +40,24 @@ export class GameEngineService {
     this.resetBoardState();
   }
 
+  hasOngoingGame(): boolean {
+    if (!this.dictionaryReady) {
+      return false;
+    }
+
+    if (this.currentWord > 1 || this.currentPosition > 1) {
+      return true;
+    }
+
+    for (const cell of this.gameBoard.values()) {
+      if (cell.getValue() !== '') {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   keyPressed(key: string): void {
 
     if (key === "Enter") {
