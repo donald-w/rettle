@@ -19,6 +19,14 @@ export class MenuComponent {
   }
 
   onNewGame(): void {
+    if (this.gameEngine.hasOngoingGame()) {
+      const confirmed = window.confirm('Start a new game? Your current progress will be lost.');
+
+      if (!confirmed) {
+        return;
+      }
+    }
+
     this.gameEngine.newGame();
   }
 }

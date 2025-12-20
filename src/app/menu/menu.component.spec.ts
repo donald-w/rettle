@@ -18,6 +18,7 @@ describe('MenuComponent', () => {
   let colourAccessibilityModeSubject: BehaviorSubject<boolean>;
   let settingsServiceSpy: jasmine.SpyObj<Pick<SettingsService, 'setColourAccessibilityMode'>>;
   let newGameSpy: jasmine.Spy;
+  let hasOngoingGameSpy: jasmine.Spy;
 
   beforeEach(async () => {
     colourAccessibilityModeSubject = new BehaviorSubject<boolean>(false);
@@ -25,6 +26,7 @@ describe('MenuComponent', () => {
       'setColourAccessibilityMode',
     ]);
     newGameSpy = jasmine.createSpy('newGame');
+    hasOngoingGameSpy = jasmine.createSpy('hasOngoingGame');
 
     await TestBed.configureTestingModule({
       imports: [MenuComponent],
@@ -42,6 +44,7 @@ describe('MenuComponent', () => {
           provide: GameEngineService,
           useValue: {
             newGame: newGameSpy,
+            hasOngoingGame: hasOngoingGameSpy,
           },
         },
       ],
@@ -67,14 +70,14 @@ describe('MenuComponent', () => {
   });
 
   it('should link back to the game', () => {
-    const buttonDe = fixture.debugElement.query(By.css('button'));
+    const buttonDe = fixture.debugElement.query(By.directive(RouterLink));
     const routerLink = buttonDe.injector.get(RouterLink);
 
     expect(routerLink.urlTree?.toString()).toBe('/game');
   });
 
   it('should navigate back to the game when button is clicked', async () => {
-    const button: HTMLButtonElement | null = fixture.nativeElement.querySelector('button');
+    const button = fixture.nativeElement.querySelector('button[routerlink]') as HTMLButtonElement | null;
     button?.click();
     await fixture.whenStable();
 
@@ -105,13 +108,38 @@ describe('MenuComponent', () => {
     expect(settingsServiceSpy.setColourAccessibilityMode).toHaveBeenCalledWith(true);
   });
 
-  it('should start a new game when the button is clicked', () => {
-    const buttons = fixture.nativeElement.querySelectorAll('button');
-    const newGameButton = buttons.item(0) as HTMLButtonElement;
+  it('should start a new game when the button is clicked and no progress exists', () => {
+    hasOngoingGameSpy.and.returnValue(false);
+    const newGameButton = fixture.nativeElement.querySelector('button:not([routerlink])') as HTMLButtonElement;
 
     newGameButton.click();
     fixture.detectChanges();
 
+    expect(hasOngoingGameSpy).toHaveBeenCalled();
     expect(newGameSpy).toHaveBeenCalled();
+  });
+
+  it('should ask for confirmation when progress exists', () => {
+    hasOngoingGameSpy.and.returnValue(true);
+    spyOn(window, 'confirm').and.returnValue(true);
+    const newGameButton = fixture.nativeElement.querySelector('button:not([routerlink])') as HTMLButtonElement;
+
+    newGameButton.click();
+    fixture.detectChanges();
+
+    expect(window.confirm).toHaveBeenCalled();
+    expect(newGameSpy).toHaveBeenCalled();
+  });
+
+  it('should not start a new game if confirmation is declined', () => {
+    hasOngoingGameSpy.and.returnValue(true);
+    spyOn(window, 'confirm').and.returnValue(false);
+    const newGameButton = fixture.nativeElement.querySelector('button:not([routerlink])') as HTMLButtonElement;
+
+    newGameButton.click();
+    fixture.detectChanges();
+
+    expect(window.confirm).toHaveBeenCalled();
+    expect(newGameSpy).not.toHaveBeenCalled();
   });
 });
