@@ -25,9 +25,9 @@ This document provides context and instructions for AI coding agents (such as Gi
 │   │   ├── help/               # Help screen component
 │   │   ├── menu/               # Menu screen component
 │   │   ├── app.component.*     # Root app shell
-│   │   ├── app.module.ts       # NgModule declarations
 │   │   ├── app-routing.module.ts # Route definitions
 │   │   ├── dictionary.service.ts # Word list loading and validation
+│   │   ├── settings.service.ts   # User settings + localStorage persistence
 │   │   └── game-engine.service.ts # Core game logic and state
 │   ├── assets/
 │   │   └── 3of6game.txt        # Dictionary word list
@@ -55,18 +55,24 @@ This document provides context and instructions for AI coding agents (such as Gi
 |---------|-------------|
 | `npm ci` | Install dependencies (clean install) |
 | `npm start` or `ng serve` | Start dev server at `http://localhost:4200/` |
-| `npm run build` | Production build (output to `dist/rettle/`) |
-| `npm test` | Run unit tests with Karma/Jasmine (ChromeHeadless, no watch) |
+| `npm run build` | Production build (output to `dist/rettle/browser/`) |
+| `npm test` | Run unit tests with Karma/Jasmine (no watch) |
 | `ng generate component <name>` | Scaffold a new component |
 | `ng generate service <name>` | Scaffold a new service |
 
 ### Running Tests
 
 ```bash
-npm test  # Runs: ng test --watch=false --browsers=ChromeHeadless
+npm test
 ```
 
-All 16 tests should pass. Tests use:
+To override Karma/Chrome settings (useful in CI/devcontainers):
+
+```bash
+npm test -- --browsers=ChromeHeadless
+```
+
+All 53 tests should pass. Tests use:
 - **Jasmine** for assertions and test structure
 - **Karma** as the test runner
 - **HttpClientTestingModule** for mocking HTTP requests
@@ -83,7 +89,7 @@ KeyboardComponent / KeyComponent
         ↓
 GameEngineService.keyPressed(key)
         ↓
-BehaviorSubject updates (gameBoard, gameState, keyboardState)
+Observable updates (gameBoard, gameState, keyboardState)
         ↓
 LetterComponent / KeyComponent (via async pipe)
         ↓
@@ -145,7 +151,8 @@ Routes are exported from `src/app/app-routing.module.ts` as `routes` (no NgModul
 
 - Standalone bootstrap via `bootstrapApplication` in `src/main.ts`; no `AppModule`.
 - Routes are provided with `provideRouter(routes, withHashLocation())`.
-- Animations enabled with `provideAnimations()`; HTTP via `provideHttpClient(withInterceptorsFromDi())`.
+- Zoneless change detection enabled with `provideZonelessChangeDetection()`; avoid reintroducing `zone.js`.
+- HTTP via `provideHttpClient(withInterceptorsFromDi())`.
 - Use `@Input()` decorators for component inputs
 - Use RxJS `BehaviorSubject` for state management
 - Subscribe to observables in `ngOnInit()`, display via `async` pipe when possible
@@ -168,9 +175,9 @@ ng generate component component-name
 ```
 
 Then:
-1. The component will be automatically added to `app.module.ts` declarations
+1. Add it to a consuming standalone component's `imports: []` (or to `routes` if it is routed)
 2. Add styles in `component-name.component.scss`
-3. Create tests in `component-name.component.spec.ts`
+3. Create/update tests in `component-name.component.spec.ts`
 
 ### Adding a New Service
 
@@ -184,7 +191,7 @@ Services are `providedIn: 'root'` by default (singleton).
 
 - Edit `GameEngineService` for core logic changes
 - The `processGuess()` function handles letter coloring (green/yellow/grey)
-- State is managed via `BehaviorSubject` maps
+- State is managed via RxJS subject maps (`gameBoard`, `gameState`, `keyboardState`)
 
 ### Updating the Word List
 
@@ -216,11 +223,12 @@ Services are `providedIn: 'root'` by default (singleton).
 The GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on push to `main`:
 
 1. **Checkout** the repository
-2. **Setup Node.js 20** with npm cache
+2. **Setup Node.js 24** with npm cache
 3. **Install dependencies** with `npm ci`
-4. **Run tests** with `npm test`
-5. **Build for production** with `npm run build:prod`
-6. **Deploy to GitHub Pages** (output at `dist/rettle/browser`)
+4. **Run lint** with `npm run lint`
+5. **Run tests** with `npm test -- --watch=false --browsers=ChromeHeadless`
+6. **Build for production** with `npm run build:prod`
+7. **Deploy to GitHub Pages** (output at `dist/rettle/browser`)
 
 ## Environment Configuration
 
@@ -263,6 +271,6 @@ The following items may need to be added when information becomes available:
 - **Internationalization:** i18n support status
 - **Error Monitoring:** Error tracking/logging services
 - **Analytics:** Usage tracking implementation
-- **Zoneless Runtime:** The app runs without ZoneJS via `provideZonelessChangeDetection()`/`ngZone: 'noop'`; avoid reintroducing
+- **Zoneless Runtime:** The app runs without ZoneJS via `provideZonelessChangeDetection()`; avoid reintroducing
   the `zone.js` polyfill and prefer Angular-managed event bindings or explicit change detection cues when wiring new
   subscriptions.

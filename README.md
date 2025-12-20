@@ -3,7 +3,7 @@
 Rettle is an Angular 21 single-page web application word guessing game with six-letter words. Originally built over a few evenings in early 2022, it now serves as a playground for AI tooling. The project follows the default Angular CLI layout with all source under `src/` and is deployed via GitHub Pages at [mypojo.io/rettle](https://mypojo.io/rettle).
 
 ## Project structure
-- **Bootstrap:** The app uses the standalone `bootstrapApplication` API with `provideRouter(routes, withHashLocation())`, `provideHttpClient(withInterceptorsFromDi())`, `provideAnimations()`, and `provideZonelessChangeDetection()` configured in `src/main.ts`.
+- **Bootstrap:** The app uses the standalone `bootstrapApplication` API with `provideRouter(routes, withHashLocation())`, `provideHttpClient(withInterceptorsFromDi())`, and `provideZonelessChangeDetection()` configured in `src/main.ts`.
 - **Routing:** Route definitions live in `src/app/app-routing.module.ts` as a `routes` export (no NgModule). The root path renders a dedicated `GameComponent`, while `AppComponent` wraps the persistent `HeaderComponent` and a router outlet.
 - **Core UI:** `GameComponent` builds a static 6×7 grid of `LetterComponent` tiles and hosts the on-screen `KeyboardComponent`. Each `KeyComponent` displays a label (Backspace appears as “Back”) and forwards clicks to the engine.
 - **Header:** `HeaderComponent` provides the top bar with Material icons flanking the centered “RETTLE” title; the icons route to `/menu` and `/help`.
@@ -22,7 +22,7 @@ Rettle is an Angular 21 single-page web application word guessing game with six-
 - Run unit tests with `ng test` (Karma/Jasmine). For e2e testing, install an appropriate runner and use `ng e2e`.
 
 ## Zoneless change detection
-- The app runs without ZoneJS using `provideZonelessChangeDetection()` and `ngZone: 'noop'`. Avoid adding `zone.js` imports and
+- The app runs without ZoneJS using `provideZonelessChangeDetection()`. Avoid adding `zone.js` imports and
   rely on Angular-managed event bindings (e.g., `@HostListener`) or explicit change detector signals when subscribing to
   observables manually.
 
