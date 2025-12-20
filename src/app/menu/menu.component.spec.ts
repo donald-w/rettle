@@ -117,6 +117,7 @@ describe('MenuComponent', () => {
 
     expect(hasOngoingGameSpy).toHaveBeenCalled();
     expect(newGameSpy).toHaveBeenCalled();
+    expect(location.path()).toBe('/game');
   });
 
   it('should ask for confirmation when progress exists', () => {
@@ -129,6 +130,7 @@ describe('MenuComponent', () => {
 
     expect(window.confirm).toHaveBeenCalled();
     expect(newGameSpy).toHaveBeenCalled();
+    expect(location.path()).toBe('/game');
   });
 
   it('should not start a new game if confirmation is declined', () => {
@@ -141,5 +143,6 @@ describe('MenuComponent', () => {
 
     expect(window.confirm).toHaveBeenCalled();
     expect(newGameSpy).not.toHaveBeenCalled();
+    expect(location.path()).not.toBe('/game');
   });
 });
