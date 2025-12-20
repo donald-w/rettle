@@ -75,4 +75,23 @@ describe('LetterComponent', () => {
     fixture.detectChanges();
     expect(div.classList.contains('grey')).toBeTrue();
   });
+
+  it('should support static mode without registering with game engine', () => {
+    gameEngineSpy.registerForValue.calls.reset();
+    gameEngineSpy.registerForState.calls.reset();
+
+    const staticFixture = TestBed.createComponent(LetterComponent);
+    const staticComponent = staticFixture.componentInstance;
+    staticComponent.useStatic = true;
+    staticComponent.value = 'Z';
+    staticComponent.state = 'green';
+    staticFixture.detectChanges();
+
+    expect(gameEngineSpy.registerForValue).not.toHaveBeenCalled();
+    expect(gameEngineSpy.registerForState).not.toHaveBeenCalled();
+
+    const div = staticFixture.nativeElement.querySelector('div') as HTMLDivElement;
+    expect(div.textContent?.trim()).toBe('Z');
+    expect(div.classList.contains('green')).toBeTrue();
+  });
 });

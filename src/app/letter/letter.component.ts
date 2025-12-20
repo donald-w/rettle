@@ -15,6 +15,10 @@ export class LetterComponent implements OnInit {
   @Input() row = 0;
   @Input() position = 0;
 
+  @Input() useStatic = false;
+  @Input() value = '';
+  @Input() state = '';
+
   isGreen: boolean = false;
   isYellow: boolean = false;
   isGrey: boolean = false;
@@ -30,8 +34,13 @@ export class LetterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.value$ = this.gameEngine.registerForValue(this.row, this.position);
-    this.state$ = this.gameEngine.registerForState(this.row, this.position);
+    if (this.useStatic) {
+      this.value$ = of(this.value);
+      this.state$ = of(this.state);
+    } else {
+      this.value$ = this.gameEngine.registerForValue(this.row, this.position);
+      this.state$ = this.gameEngine.registerForState(this.row, this.position);
+    }
 
     this.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: string) => {
       this.isGreen = false;

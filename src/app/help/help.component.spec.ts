@@ -45,6 +45,17 @@ describe('HelpComponent', () => {
     expect(native.querySelector('p')?.textContent).toContain('Learn how to play');
   });
 
+  it('should render a four-state letter legend', () => {
+    const native = fixture.nativeElement as HTMLElement;
+    const rows = native.querySelectorAll('.legend .legend-row');
+    expect(rows.length).toBe(4);
+
+    const texts = Array.from(native.querySelectorAll('.legend .legend-text')).map((el) =>
+      (el.textContent ?? '').trim(),
+    );
+    expect(texts).toEqual(['Correct position', 'Wrong position', 'Not in word', 'Invalid word']);
+  });
+
   it('should link back to the game', () => {
     const buttonDe = fixture.debugElement.query(By.css('button'));
     const routerLink = buttonDe.injector.get(RouterLink);

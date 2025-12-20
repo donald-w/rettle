@@ -12,3 +12,22 @@
     padding: 0.5rem 1.25rem;
   }
 }
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.legend-text {
+  margin-left: 0.75rem;
+  text-align: left;
+}

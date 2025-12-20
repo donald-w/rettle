@@ -8,15 +8,21 @@ describe('SettingsService', () => {
     TestBed.configureTestingModule({});
   });
 
-  it('defaults to disabled when nothing stored', () => {
+  it('defaults to enabled when nothing stored', () => {
     const service = TestBed.inject(SettingsService);
-    expect(service.getColourAccessibilityMode()).toBeFalse();
+    expect(service.getColourAccessibilityMode()).toBeTrue();
   });
 
   it('reads initial value from localStorage', () => {
     localStorage.setItem('rettle.colourAccessibilityMode', 'true');
     const service = new SettingsService();
     expect(service.getColourAccessibilityMode()).toBeTrue();
+  });
+
+  it('respects stored disabled value from localStorage', () => {
+    localStorage.setItem('rettle.colourAccessibilityMode', 'false');
+    const service = new SettingsService();
+    expect(service.getColourAccessibilityMode()).toBeFalse();
   });
 
   it('persists changes to localStorage', () => {

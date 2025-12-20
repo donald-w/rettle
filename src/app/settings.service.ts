@@ -5,9 +5,14 @@ const STORAGE_KEY = 'rettle.colourAccessibilityMode';
 
 function readStoredBoolean(key: string): boolean {
   try {
-    return localStorage.getItem(key) === 'true';
+    const value = localStorage.getItem(key);
+    if (value === null) {
+      return true;
+    }
+
+    return value === 'true';
   } catch {
-    return false;
+    return true;
   }
 }
 

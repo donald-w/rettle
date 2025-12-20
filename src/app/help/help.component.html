@@ -1,5 +1,25 @@
 <div class="help-page">
   <h1>Help</h1>
   <p>Learn how to play Rettle and view tips here soon.</p>
+
+  <div class="legend" aria-label="Letter state legend">
+    <div class="legend-row">
+      <app-letter [useStatic]="true" value="A" state="green"></app-letter>
+      <div class="legend-text">Correct position</div>
+    </div>
+    <div class="legend-row">
+      <app-letter [useStatic]="true" value="A" state="yellow"></app-letter>
+      <div class="legend-text">Wrong position</div>
+    </div>
+    <div class="legend-row">
+      <app-letter [useStatic]="true" value="A" state="grey"></app-letter>
+      <div class="legend-text">Not in word</div>
+    </div>
+    <div class="legend-row">
+      <app-letter [useStatic]="true" value="A" state="red"></app-letter>
+      <div class="legend-text">Invalid word</div>
+    </div>
+  </div>
+
   <button routerLink="/game" type="button">Back to game</button>
 </div>
