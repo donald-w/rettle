@@ -108,38 +108,41 @@ describe('MenuComponent', () => {
     expect(settingsServiceSpy.setColourAccessibilityMode).toHaveBeenCalledWith(true);
   });
 
-  it('should start a new game when the button is clicked and no progress exists', () => {
+  it('should start a new game when the button is clicked and no progress exists', async () => {
     hasOngoingGameSpy.and.returnValue(false);
-    const newGameButton = fixture.nativeElement.querySelector('button:not([routerlink])') as HTMLButtonElement;
+    const newGameButton = fixture.nativeElement.querySelector('button.new-game') as HTMLButtonElement;
 
     newGameButton.click();
     fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(hasOngoingGameSpy).toHaveBeenCalled();
     expect(newGameSpy).toHaveBeenCalled();
     expect(location.path()).toBe('/game');
   });
 
-  it('should ask for confirmation when progress exists', () => {
+  it('should ask for confirmation when progress exists', async () => {
     hasOngoingGameSpy.and.returnValue(true);
     spyOn(window, 'confirm').and.returnValue(true);
-    const newGameButton = fixture.nativeElement.querySelector('button:not([routerlink])') as HTMLButtonElement;
+    const newGameButton = fixture.nativeElement.querySelector('button.new-game') as HTMLButtonElement;
 
     newGameButton.click();
     fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(window.confirm).toHaveBeenCalled();
     expect(newGameSpy).toHaveBeenCalled();
     expect(location.path()).toBe('/game');
   });
 
-  it('should not start a new game if confirmation is declined', () => {
+  it('should not start a new game if confirmation is declined', async () => {
     hasOngoingGameSpy.and.returnValue(true);
     spyOn(window, 'confirm').and.returnValue(false);
-    const newGameButton = fixture.nativeElement.querySelector('button:not([routerlink])') as HTMLButtonElement;
+    const newGameButton = fixture.nativeElement.querySelector('button.new-game') as HTMLButtonElement;
 
     newGameButton.click();
     fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(window.confirm).toHaveBeenCalled();
     expect(newGameSpy).not.toHaveBeenCalled();
