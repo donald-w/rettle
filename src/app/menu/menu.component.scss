@@ -10,6 +10,15 @@
   button {
     margin-top: 1rem;
     padding: 0.5rem 1.25rem;
+    display: block;
+    width: 100%;
+    max-width: 14rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  button + button {
+    margin-top: 0.5rem;
   }
 }
 

@@ -14,6 +14,7 @@ export class GameEngineService {
   gameBoard = new Map<string, BehaviorSubject<string>>();
   gameState = new Map<string, Subject<string>>();
   keyboardState = new Map<string, BehaviorSubject<string>>();
+  private dictionaryReady = false;
 
   constructor(private dictionary: DictionaryService) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,9 +24,20 @@ export class GameEngineService {
 
     this.dictionary.dictionaryReady$.subscribe((ready) => {
       if (ready) {
+        this.dictionaryReady = true;
         this.word = this.dictionary.getWordOfTheDay(new Date());
       }
     });
+  }
+
+  newGame(seed?: number): void {
+    if (!this.dictionaryReady) {
+      return;
+    }
+
+    const randomSeed = seed ?? Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+    this.word = this.dictionary.getWordBySeed(randomSeed);
+    this.resetBoardState();
   }
 
   keyPressed(key: string): void {
@@ -166,6 +178,23 @@ export class GameEngineService {
   getKeyColor(key: string) {
     const sub = this.keyboardState.get(key);
     return sub?.getValue();
+  }
+
+  private resetBoardState(): void {
+    this.currentWord = 1;
+    this.currentPosition = 1;
+
+    for (const cell of this.gameBoard.values()) {
+      cell.next("");
+    }
+
+    for (const state of this.gameState.values()) {
+      state.next("black");
+    }
+
+    for (const key of this.keyboardState.values()) {
+      key.next("light");
+    }
   }
 }
 

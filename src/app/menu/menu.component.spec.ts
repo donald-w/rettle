@@ -8,6 +8,7 @@ import { provideRouter } from '@angular/router';
 import { MenuComponent } from './menu.component';
 import { SettingsService } from '../settings.service';
 import { BehaviorSubject } from 'rxjs';
+import { GameEngineService } from '../game-engine.service';
 
 describe('MenuComponent', () => {
   let component: MenuComponent;
@@ -16,12 +17,14 @@ describe('MenuComponent', () => {
   let location: Location;
   let colourAccessibilityModeSubject: BehaviorSubject<boolean>;
   let settingsServiceSpy: jasmine.SpyObj<Pick<SettingsService, 'setColourAccessibilityMode'>>;
+  let newGameSpy: jasmine.Spy;
 
   beforeEach(async () => {
     colourAccessibilityModeSubject = new BehaviorSubject<boolean>(false);
     settingsServiceSpy = jasmine.createSpyObj<Pick<SettingsService, 'setColourAccessibilityMode'>>('SettingsService', [
       'setColourAccessibilityMode',
     ]);
+    newGameSpy = jasmine.createSpy('newGame');
 
     await TestBed.configureTestingModule({
       imports: [MenuComponent],
@@ -33,6 +36,12 @@ describe('MenuComponent', () => {
           useValue: {
             colourAccessibilityMode$: colourAccessibilityModeSubject.asObservable(),
             setColourAccessibilityMode: settingsServiceSpy.setColourAccessibilityMode,
+          },
+        },
+        {
+          provide: GameEngineService,
+          useValue: {
+            newGame: newGameSpy,
           },
         },
       ],
@@ -94,5 +103,15 @@ describe('MenuComponent', () => {
     fixture.detectChanges();
 
     expect(settingsServiceSpy.setColourAccessibilityMode).toHaveBeenCalledWith(true);
+  });
+
+  it('should start a new game when the button is clicked', () => {
+    const buttons = fixture.nativeElement.querySelectorAll('button');
+    const newGameButton = buttons.item(0) as HTMLButtonElement;
+
+    newGameButton.click();
+    fixture.detectChanges();
+
+    expect(newGameSpy).toHaveBeenCalled();
   });
 });

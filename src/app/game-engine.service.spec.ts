@@ -12,6 +12,7 @@ describe('GameEngineService', () => {
     isWord: () => boolean;
     dictionaryReady$: any;
     getWordOfTheDay: jasmine.Spy;
+    getWordBySeed: jasmine.Spy;
   };
 
   beforeEach(() => {
@@ -20,6 +21,7 @@ describe('GameEngineService', () => {
       isWord: () => true,
       dictionaryReady$: ready$.asObservable(),
       getWordOfTheDay: jasmine.createSpy('getWordOfTheDay').and.returnValue('PLANET'),
+      getWordBySeed: jasmine.createSpy('getWordBySeed').and.returnValue('GALAXY'),
     };
 
     TestBed.configureTestingModule({
@@ -72,5 +74,20 @@ describe('GameEngineService', () => {
     service.registerKey('Q').subscribe((value) => states.push(value));
 
     expect(states[0]).toBe('green');
+  });
+
+  it('should reset state and choose a seeded word on newGame()', () => {
+    ready$.next(true);
+    (service.registerForValue(1, 1) as BehaviorSubject<string>).next('A');
+    (service.registerForState(1, 1) as BehaviorSubject<string>).next('green');
+    (service.registerKey('Q') as BehaviorSubject<string>).next('yellow');
+
+    service.newGame(1234);
+
+    expect(mockDictionary.getWordBySeed).toHaveBeenCalledWith(1234);
+    expect(service.word).toBe('GALAXY');
+    expect((service.registerForValue(1, 1) as BehaviorSubject<string>).getValue()).toBe('');
+    expect((service.registerForState(1, 1) as BehaviorSubject<string>).getValue()).toBe('black');
+    expect((service.registerKey('Q') as BehaviorSubject<string>).getValue()).toBe('light');
   });
 });
