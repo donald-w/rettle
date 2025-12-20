@@ -66,11 +66,17 @@ This document provides context and instructions for AI coding agents (such as Gi
 npm test
 ```
 
-To override Karma/Chrome settings (useful in CI/devcontainers):
+Prefer not to pass `--browsers` (let `karma.conf.js` pick the correct launcher for the environment).
+
+To run once (no watch):
 
 ```bash
-npm test -- --browsers=ChromeHeadless
+npm test -- --watch=false
 ```
+
+Troubleshooting / forcing a browser (avoid unless needed):
+- Local/Linux (non-container): `npm test -- --browsers=ChromeHeadless`
+- Devcontainer: use `npm test -- --browsers=ChromeHeadlessNoSandbox` (sandboxed `ChromeHeadless` may fail with "Operation not permitted")
 
 All 53 tests should pass. Tests use:
 - **Jasmine** for assertions and test structure

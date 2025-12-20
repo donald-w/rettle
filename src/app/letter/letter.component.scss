@@ -1,12 +1,14 @@
 .letter {
-  width: 1rem;
-  height: 2rem;
   border-style: solid;
   border-radius: 0.3rem;
   border-color: grey;
   text-align: center;
   background-color: black;
   color: white;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  z-index: 0;
   width: 3rem;
   height: 3rem;
   line-height: 3rem;
@@ -14,6 +16,67 @@
   font-size: 30px;
   font-weight: 800;
   transition: 1s;
+}
+
+:host-context(.colour-accessibility-mode) .letter.green,
+:host-context(.colour-accessibility-mode) .letter.yellow,
+:host-context(.colour-accessibility-mode) .letter.red {
+  --rettle-pattern-mask: none;
+  --rettle-pattern-size: 96%;
+  --rettle-pattern-before: transparent;
+  --rettle-pattern-after: transparent;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.44;
+    -webkit-mask-image: var(--rettle-pattern-mask);
+    mask-image: var(--rettle-pattern-mask);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: var(--rettle-pattern-size) var(--rettle-pattern-size);
+    mask-size: var(--rettle-pattern-size) var(--rettle-pattern-size);
+    z-index: -1;
+  }
+
+  &::before {
+    background-color: var(--rettle-pattern-before);
+  }
+
+  &::after {
+    background-color: var(--rettle-pattern-after);
+  }
+
+  &::before {
+    opacity: 0.52;
+    transform: translate(2px, 2px);
+  }
+}
+
+:host-context(.colour-accessibility-mode) .letter.green {
+  --rettle-pattern-mask: var(--rettle-mask-star);
+  --rettle-pattern-size: 94%;
+  --rettle-pattern-before: color-mix(in srgb, var(--rettle-correct) 70%, black);
+  --rettle-pattern-after: color-mix(in srgb, var(--rettle-correct) 80%, white);
+}
+
+:host-context(.colour-accessibility-mode) .letter.yellow {
+  --rettle-pattern-mask: var(--rettle-mask-cloud);
+  --rettle-pattern-size: 98%;
+  --rettle-pattern-before: color-mix(in srgb, var(--rettle-present) 70%, black);
+  --rettle-pattern-after: color-mix(in srgb, var(--rettle-present) 80%, white);
+}
+
+:host-context(.colour-accessibility-mode) .letter.red {
+  --rettle-pattern-mask: var(--rettle-mask-cross);
+  --rettle-pattern-size: 96%;
+  --rettle-pattern-before: color-mix(in srgb, var(--rettle-error) 70%, black);
+  --rettle-pattern-after: color-mix(in srgb, var(--rettle-error) 80%, white);
 }
 
 .letter.green {

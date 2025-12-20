@@ -9,6 +9,63 @@ button {
   //background-color: grey;
   color: white;
   margin: 0.1rem;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  z-index: 0;
+}
+
+:host-context(.colour-accessibility-mode) button.green,
+:host-context(.colour-accessibility-mode) button.yellow {
+  --rettle-pattern-mask: none;
+  --rettle-pattern-size: 96%;
+  --rettle-pattern-before: transparent;
+  --rettle-pattern-after: transparent;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.42;
+    -webkit-mask-image: var(--rettle-pattern-mask);
+    mask-image: var(--rettle-pattern-mask);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: var(--rettle-pattern-size) var(--rettle-pattern-size);
+    mask-size: var(--rettle-pattern-size) var(--rettle-pattern-size);
+    z-index: -1;
+  }
+
+  &::before {
+    background-color: var(--rettle-pattern-before);
+  }
+
+  &::after {
+    background-color: var(--rettle-pattern-after);
+  }
+
+  &::before {
+    opacity: 0.50;
+    transform: translate(2px, 2px);
+  }
+}
+
+:host-context(.colour-accessibility-mode) button.green {
+  --rettle-pattern-mask: var(--rettle-mask-star);
+  --rettle-pattern-size: 94%;
+  --rettle-pattern-before: color-mix(in srgb, var(--rettle-correct) 70%, black);
+  --rettle-pattern-after: color-mix(in srgb, var(--rettle-correct) 80%, white);
+}
+
+:host-context(.colour-accessibility-mode) button.yellow {
+  --rettle-pattern-mask: var(--rettle-mask-cloud);
+  --rettle-pattern-size: 98%;
+  --rettle-pattern-before: color-mix(in srgb, var(--rettle-present) 70%, black);
+  --rettle-pattern-after: color-mix(in srgb, var(--rettle-present) 80%, white);
 }
 
 .green {
@@ -30,3 +87,4 @@ button {
   background-color: rgb(40, 40, 40) !important;
   transition: 1s;
 }
+

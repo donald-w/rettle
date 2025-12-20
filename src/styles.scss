@@ -26,6 +26,10 @@ body {
   --rettle-present: rgb(224, 196, 68);
   --rettle-absent: rgb(60, 60, 60);
   --rettle-error: rgb(211, 46, 46);
+
+  --rettle-mask-star: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cpath%20fill='black'%20d='M50%205%20L61%2038%20L95%2038%20L67%2058%20L78%2091%20L50%2071%20L22%2091%20L33%2058%20L5%2038%20L39%2038%20Z'/%3E%3C/svg%3E");
+  --rettle-mask-cloud: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cpath%20fill='black'%20d='M30%2072%20H75%20A18%2018%200%200%200%2076%2036%20A24%2024%200%200%200%2031%2030%20A16%2016%200%200%200%2030%2072%20Z'/%3E%3C/svg%3E");
+  --rettle-mask-cross: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cpath%20fill='black'%20d='M20%2030%20L30%2020%20L50%2040%20L70%2020%20L80%2030%20L60%2050%20L80%2070%20L70%2080%20L50%2060%20L30%2080%20L20%2070%20L40%2050%20Z'/%3E%3C/svg%3E");
 }
 
 .colour-accessibility-mode {
