@@ -56,6 +56,17 @@ export class DictionaryService {
     return this.sixLetterWords[index];
   }
 
+  getWordBySeed(seed: number): string {
+    if (this.sixLetterWords.length === 0) {
+      throw new Error('Dictionary not ready');
+    }
+
+    const normalizedSeed = Math.abs(Math.trunc(seed));
+    const index = normalizedSeed % this.sixLetterWords.length;
+
+    return this.sixLetterWords[index];
+  }
+
   private hashString(input: string): number {
     let hash = 0;
 
