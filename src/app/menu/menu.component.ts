@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { SettingsService } from '../settings.service';
 import { GameEngineService } from '../game-engine.service';
@@ -12,7 +12,11 @@ import { GameEngineService } from '../game-engine.service';
   imports: [RouterLink, AsyncPipe]
 })
 export class MenuComponent {
-  constructor(readonly settingsService: SettingsService, private readonly gameEngine: GameEngineService) {}
+  constructor(
+    readonly settingsService: SettingsService,
+    private readonly gameEngine: GameEngineService,
+    private readonly router: Router
+  ) {}
 
   onColourAccessibilityModeChanged(checked: boolean): void {
     this.settingsService.setColourAccessibilityMode(checked);
@@ -28,5 +32,6 @@ export class MenuComponent {
     }
 
     this.gameEngine.newGame();
+    this.router.navigate(['/game']);
   }
 }
