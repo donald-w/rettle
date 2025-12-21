@@ -54,9 +54,12 @@ This document provides context and instructions for AI coding agents (such as Gi
 | Command | Description |
 |---------|-------------|
 | `npm ci` | Install dependencies (clean install) |
-| `npm start` or `ng serve` | Start dev server at `http://localhost:4200/` |
-| `npm run build` | Production build (output to `dist/rettle/browser/`) |
-| `npm test` | Run unit tests with Karma/Jasmine (no watch) |
+| `npm start` | Start dev server at `http://localhost:4200/` (runs `ng serve --host 0.0.0.0 --port 4200 --allowed-hosts`) |
+| `ng serve` | Equivalent to the `start` script without the additional host/port flags |
+| `npm run build` | Production build via `build:prod` (output to `dist/rettle/browser/`) |
+| `npm test` | Run unit tests with Karma/Jasmine (`--watch=false` by default) |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Auto-fix lint issues |
 | `ng generate component <name>` | Scaffold a new component |
 | `ng generate service <name>` | Scaffold a new service |
 
@@ -163,6 +166,7 @@ Routes are exported from `src/app/app-routing.module.ts` as `routes` (no NgModul
 - Use RxJS `BehaviorSubject` for state management
 - Subscribe to observables in `ngOnInit()`, display via `async` pipe when possible
 - Use SCSS for component styles (scoped per component)
+- `SettingsService` persists colour-accessibility mode to `localStorage`; wrap storage access in try/catch inside helpers, not at import boundaries.
 
 ### Testing
 
@@ -260,6 +264,10 @@ The GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on push to `ma
 - The game uses a deterministic "word of the day" based on date hashing
 - Debug helper: In browser console, call `window.tellme()` to reveal the answer
 - The grid is 6 columns (letters) × 7 rows (attempts)
+- Node version is pinned to **22** via `.nvmrc`; align local tooling before running scripts.
+- `GameCompleteComponent` offers a "Try a different word" action that seeds a randomized new game.
+- `MenuComponent` provides a "New game" button with confirmation when abandoning in-progress games and toggles colour accessibility mode (patterned tiles and alternate palette).
+- `KeyboardComponent` listens for physical keyup events; `KeyComponent` handles on-screen clicks and forwards to `GameEngineService.keyPressed`.
 
 ---
 
