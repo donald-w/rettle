@@ -81,13 +81,53 @@ describe('GameEngineService', () => {
     (service.registerForValue(1, 1) as BehaviorSubject<string>).next('A');
     (service.registerForState(1, 1) as BehaviorSubject<string>).next('green');
     (service.registerKey('Q') as BehaviorSubject<string>).next('yellow');
+    service.gameOutcome$.next('won');
 
     service.newGame(1234);
 
     expect(mockDictionary.getWordBySeed).toHaveBeenCalledWith(1234);
     expect(service.word).toBe('GALAXY');
+    expect(service.gameOutcome$.getValue()).toBe('playing');
     expect((service.registerForValue(1, 1) as BehaviorSubject<string>).getValue()).toBe('');
     expect((service.registerForState(1, 1) as BehaviorSubject<string>).getValue()).toBe('black');
     expect((service.registerKey('Q') as BehaviorSubject<string>).getValue()).toBe('light');
+  });
+
+  it('should mark the game as won when a correct guess is entered', () => {
+    ready$.next(true);
+
+    'PLANET'.split('').forEach((letter) => service.keyPressed(letter));
+    service.keyPressed('Enter');
+
+    expect(service.gameOutcome$.getValue()).toBe('won');
+  });
+
+  it('should mark the game as lost after the final attempt', () => {
+    ready$.next(true);
+
+    const enterGuess = (guess: string) => {
+      guess.split('').forEach((letter) => service.keyPressed(letter));
+      service.keyPressed('Enter');
+    };
+
+    for (let i = 0; i < service.maxAttempts; i++) {
+      enterGuess('AAAAAA');
+    }
+
+    expect(service.gameOutcome$.getValue()).toBe('lost');
+  });
+
+  it('should ignore further input once the game is complete', () => {
+    ready$.next(true);
+
+    'PLANET'.split('').forEach((letter) => service.keyPressed(letter));
+    service.keyPressed('Enter');
+    expect(service.gameOutcome$.getValue()).toBe('won');
+
+    const currentWord = service.currentWord;
+    service.keyPressed('A');
+    service.keyPressed('Enter');
+
+    expect(service.currentWord).toBe(currentWord);
   });
 });
