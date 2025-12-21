@@ -3,7 +3,12 @@
 
 module.exports = function (config) {
   const fs = require('fs');
-  const isContainer = fs.existsSync('/.dockerenv') || fs.existsSync('/run/.containerenv');
+  const isRoot = process.getuid && process.getuid() === 0;
+  if (isRoot && !process.env.CHROME_BIN) {
+    process.env.CHROME_BIN = '/usr/local/bin/chromium';
+  }
+
+  const isContainer = isRoot || fs.existsSync('/.dockerenv') || fs.existsSync('/run/.containerenv');
 
   const browsers = isContainer ? ['ChromeHeadlessNoSandbox'] : ['ChromeHeadless'];
 
