@@ -41,8 +41,8 @@ describe('HelpComponent', () => {
 
   it('should render help copy', () => {
     const native = fixture.nativeElement as HTMLElement;
-    expect(native.querySelector('h1')?.textContent?.trim()).toBe('Help');
-    expect(native.querySelector('p')?.textContent).toContain('Learn how to play');
+    expect(native.querySelector('h1')?.textContent?.trim()).toBe('How to play');
+    expect(native.querySelector('p')?.textContent).toContain('Guess the six-letter word in seven tries');
   });
 
   it('should render a four-state letter legend', () => {
