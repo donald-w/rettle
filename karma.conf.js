@@ -2,8 +2,10 @@
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
 module.exports = function (config) {
-  const isDevcontainer = process.env.RETTLE_DEVCONTAINER === '1' || process.env.CODESPACES === 'true';
-  const browsers = isDevcontainer ? ['ChromeHeadlessNoSandbox'] : ['ChromeHeadless'];
+  const fs = require('fs');
+  const isContainer = fs.existsSync('/.dockerenv') || fs.existsSync('/run/.containerenv');
+
+  const browsers = isContainer ? ['ChromeHeadlessNoSandbox'] : ['ChromeHeadless'];
 
   config.set({
     basePath: '',
@@ -40,7 +42,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    customLaunchers: isDevcontainer
+    customLaunchers: isContainer
       ? {
           ChromeHeadlessNoSandbox: {
             base: 'ChromeHeadless',
