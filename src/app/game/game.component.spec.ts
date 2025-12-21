@@ -3,6 +3,7 @@ import { By } from '@angular/platform-browser';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { GameComponent } from './game.component';
+import { GameEngineService } from '../game-engine.service';
 
 describe('GameComponent', () => {
   let component: GameComponent;
@@ -52,5 +53,14 @@ describe('GameComponent', () => {
   it('should render the keyboard', () => {
     const keyboard = fixture.debugElement.queryAll(By.css('app-keyboard'));
     expect(keyboard.length).toBe(1);
+  });
+
+  it('should replace the keyboard when the game is complete', () => {
+    const gameEngine = TestBed.inject(GameEngineService);
+    gameEngine.gameOutcome$.next('won');
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.queryAll(By.css('app-keyboard')).length).toBe(0);
+    expect(fixture.debugElement.queryAll(By.css('app-game-complete')).length).toBe(1);
   });
 });

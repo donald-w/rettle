@@ -2,18 +2,22 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { DictionaryService } from './dictionary.service';
 
+export type GameOutcome = 'playing' | 'won' | 'lost';
+
 @Injectable({
   providedIn: 'root'
 })
 export class GameEngineService {
   word: string = "";
   wordlength = 6;
+  maxAttempts = 7;
   currentWord = 1;
   currentPosition = 1;
 
   gameBoard = new Map<string, BehaviorSubject<string>>();
   gameState = new Map<string, Subject<string>>();
   keyboardState = new Map<string, BehaviorSubject<string>>();
+  readonly gameOutcome$ = new BehaviorSubject<GameOutcome>('playing');
   private dictionaryReady = false;
 
   constructor(private dictionary: DictionaryService) {
@@ -26,6 +30,7 @@ export class GameEngineService {
       if (ready) {
         this.dictionaryReady = true;
         this.word = this.dictionary.getWordOfTheDay(new Date());
+        this.resetBoardState();
       }
     });
   }
@@ -60,18 +65,23 @@ export class GameEngineService {
 
   keyPressed(key: string): void {
 
+    if (this.gameOutcome$.getValue() !== 'playing') {
+      return;
+    }
+
     if (key === "Enter") {
       if (this.currentPosition === this.wordlength + 1) {
         let guess = "";
 
         for (let i = 1; i < this.wordlength + 1; i++) {
-          const sub = this.gameBoard.get(this.currentWord + "-" + i);
-
-          const letter = sub?.getValue();
-
-          if (letter === undefined) {
-            return; // TODO fix typing
+          const cellKey = this.currentWord + "-" + i;
+          let sub = this.gameBoard.get(cellKey);
+          if (!sub) {
+            sub = new BehaviorSubject<string>("");
+            this.gameBoard.set(cellKey, sub);
           }
+
+          const letter = sub.getValue();
 
           guess += letter;
         }
@@ -88,15 +98,20 @@ export class GameEngineService {
         const result = processGuess(this.word, guess);
 
         for (let i = 1; i < this.wordlength + 1; i++) {
-          const sub = this.gameBoard.get(this.currentWord + "-" + i);
-          const state = this.gameState.get(this.currentWord + "-" + i);
-
-
-          const letter = sub?.getValue();
-
-          if (letter === undefined) {
-            return; // TODO fix typing
+          const cellKey = this.currentWord + "-" + i;
+          let sub = this.gameBoard.get(cellKey);
+          if (!sub) {
+            sub = new BehaviorSubject<string>("");
+            this.gameBoard.set(cellKey, sub);
           }
+
+          let state = this.gameState.get(cellKey);
+          if (!state) {
+            state = new BehaviorSubject<string>("black");
+            this.gameState.set(cellKey, state);
+          }
+
+          const letter = sub.getValue();
 
           if (result[i-1] === 'grey') {
             if (this.getKeyColor(letter) === 'light') {
@@ -116,6 +131,13 @@ export class GameEngineService {
           state?.next(result[i-1]);
         }
 
+        const won = result.every((state) => state === 'green');
+        if (won) {
+          this.gameOutcome$.next('won');
+        } else if (this.currentWord >= this.maxAttempts) {
+          this.gameOutcome$.next('lost');
+        }
+
         this.currentPosition = 1;
         this.currentWord++;
       } else {
@@ -128,16 +150,26 @@ export class GameEngineService {
 
       if (this.currentPosition > 1) {
         this.currentPosition--;
-        const sub = this.gameBoard.get(this.currentWord + "-" + this.currentPosition);
-        sub?.next("");
+        const cellKey = this.currentWord + "-" + this.currentPosition;
+        let sub = this.gameBoard.get(cellKey);
+        if (!sub) {
+          sub = new BehaviorSubject<string>("");
+          this.gameBoard.set(cellKey, sub);
+        }
+        sub.next("");
       }
     } else {
       if (this.currentPosition == this.wordlength + 1) {
         // Ignore.  Last position, and not enter
       } else {
         // Normal key.  Advance
-        const sub = this.gameBoard.get(this.currentWord + "-" + this.currentPosition++);
-        sub?.next(key);
+        const cellKey = this.currentWord + "-" + this.currentPosition++;
+        let sub = this.gameBoard.get(cellKey);
+        if (!sub) {
+          sub = new BehaviorSubject<string>("");
+          this.gameBoard.set(cellKey, sub);
+        }
+        sub.next(key);
       }
     }
   }
@@ -189,18 +221,28 @@ export class GameEngineService {
   }
 
   setKeyColor(key: string, color: string) {
-    const sub = this.keyboardState.get(key);
-    sub?.next(color)
+    let sub = this.keyboardState.get(key);
+    if (!sub) {
+      sub = new BehaviorSubject<string>('light');
+      this.keyboardState.set(key, sub);
+    }
+    sub.next(color)
   }
 
   getKeyColor(key: string) {
-    const sub = this.keyboardState.get(key);
-    return sub?.getValue();
+    let sub = this.keyboardState.get(key);
+    if (!sub) {
+      sub = new BehaviorSubject<string>('light');
+      this.keyboardState.set(key, sub);
+    }
+    return sub.getValue();
   }
 
   private resetBoardState(): void {
     this.currentWord = 1;
     this.currentPosition = 1;
+
+    this.gameOutcome$.next('playing');
 
     for (const cell of this.gameBoard.values()) {
       cell.next("");
