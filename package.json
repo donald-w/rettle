@@ -2,7 +2,7 @@
   "name": "rettle",
   "version": "0.0.0",
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=22 <23"
   },
   "scripts": {
     "ng": "ng",
@@ -38,7 +38,7 @@
     "@angular/cli": "^21.0.4",
     "@angular/compiler-cli": "^21.0.1",
     "@types/jasmine": "~5.1.0",
-    "@types/node": "^24.10.1",
+    "@types/node": "^22.10.0",
     "@typescript-eslint/eslint-plugin": "^8.48.0",
     "@typescript-eslint/parser": "^8.48.0",
     "eslint": "^9.39.1",
