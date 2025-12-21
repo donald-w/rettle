@@ -229,7 +229,7 @@ Services are `providedIn: 'root'` by default (singleton).
 The GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on push to `main`:
 
 1. **Checkout** the repository
-2. **Setup Node.js 24** with npm cache
+2. **Setup Node.js 22** with npm cache
 3. **Install dependencies** with `npm ci`
 4. **Run lint** with `npm run lint`
 5. **Run tests** with `npm test -- --watch=false --browsers=ChromeHeadless`
