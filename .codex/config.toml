@@ -1,0 +1,6 @@
+[provisioning]
+apt_packages = [
+  "chromium",
+  "chromium-sandbox",
+  "fonts-liberation",
+]
