@@ -2,31 +2,32 @@
 
 Rettle is an Angular 21 single-page web application word guessing game with six-letter words. Originally built over a few evenings in early 2022, it now serves as a playground for AI tooling. The project follows the default Angular CLI layout with all source under `src/` and is deployed via GitHub Pages at [mypojo.io/rettle](https://mypojo.io/rettle).
 
-## Project structure
-- **Bootstrap:** The app uses the standalone `bootstrapApplication` API with `provideRouter(routes, withHashLocation())`, `provideHttpClient(withInterceptorsFromDi())`, and `provideZonelessChangeDetection()` configured in `src/main.ts`.
-- **Routing:** Route definitions live in `src/app/app-routing.module.ts` as a `routes` export (no NgModule). The root path renders a dedicated `GameComponent`, while `AppComponent` wraps the persistent `HeaderComponent` and a router outlet.
-- **Core UI:** `GameComponent` builds a static 6×7 grid of `LetterComponent` tiles and hosts the on-screen `KeyboardComponent`. Each `KeyComponent` displays a label (Backspace appears as “Back”) and forwards clicks to the engine.
-- **Header:** `HeaderComponent` provides the top bar with Material icons flanking the centered “RETTLE” title; the icons route to `/menu` and `/help`.
-- **Styles:** Global styling lives in `src/styles.scss`, and each component has scoped SCSS (e.g., `letter.component.scss`, `key.component.scss`) for sizing and color themes.
+## Prerequisites and setup
+- **Node.js 22** (see `.nvmrc`); `npm` ships with Node and is used for all scripts.
+- Install dependencies with `npm ci`.
 
-## Game logic and data flow
-- **GameEngineService:** Tracks board state, keyboard colors, current row/column, and the target word. It exposes per-cell and per-key observables, handles physical and on-screen key presses, validates guesses through `DictionaryService`, colors tiles/keys via `processGuess`, advances rows, and offers a `window.tellme` debug helper to reveal the answer.
-- **DictionaryService:** Loads the word list from `assets/3of6game.txt`, provides readiness via an observable, validates guesses, and deterministically picks the “word of the day” by hashing the date into the six-letter list.
-- **Data flow:** Input travels Keyboard → `GameEngineService.keyPressed` → board/keyboard subjects → `LetterComponent` and `KeyComponent` via the `async` pipe for rendering and color updates.
-- **Menu/Help pages:** `/menu` and `/help` routes show placeholder pages with a back button returning to the game.
+## Runbook
+- **Start dev server:** `npm start` (runs `ng serve --host 0.0.0.0 --port 4200 --allowed-hosts`).
+- **Lint:** `npm run lint` (ESLint) or `npm run lint:fix` to auto-fix.
+- **Unit tests:** `npm test` (Karma/Jasmine, `--watch=false` by default). CI pins ChromeHeadless; local runs generally work with the default launcher.
+- **Build:** `npm run build` (production build via `build:prod`, output to `dist/rettle/browser`).
 
-## Development
-- Run `ng serve` for a dev server at `http://localhost:4200/`; the app reloads on source changes.
-- Generate artifacts with `ng generate component|directive|pipe|service|class|guard|interface|enum|module`.
-- Build with `ng build` (output in `dist/`).
-- Run unit tests with `ng test` (Karma/Jasmine). For e2e testing, install an appropriate runner and use `ng e2e`.
+## Game flow
+- Six-letter word, seven attempts. The on-screen keyboard and physical keyboard both route through `GameEngineService.keyPressed`.
+- Guesses are validated against `assets/3of6game.txt`; invalid entries flash tiles red. The “word of the day” is deterministic from the current date, and `window.tellme()` reveals it for debugging.
+- Completing the game shows `GameCompleteComponent` with a win/lose message and a “Try a different word” button that seeds a fresh randomized word.
+- The menu page offers a **New game** button (with confirmation if a game is in progress) and toggles **Colour accessibility mode**, which swaps to an alternate palette and patterned tiles; the preference persists in `localStorage`. Help provides a legend for tile colors.
+
+## Architecture and files to know
+- **Bootstrap:** Standalone `bootstrapApplication` in `src/main.ts` with `provideRouter(routes, withHashLocation())`, `provideHttpClient(withInterceptorsFromDi())`, and `provideZonelessChangeDetection()`.
+- **Routing:** `src/app/app-routing.module.ts` exports `routes` mapping `/game`, `/help`, and `/menu`. `AppComponent` wraps the persistent `HeaderComponent` plus `router-outlet`.
+- **State and logic:** `GameEngineService` manages board/keyboard subjects, row/column tracking, guess validation, and win/loss detection. `DictionaryService` streams readiness, builds the dictionary, and exposes deterministic selection helpers.
+- **UI composition:** `GameComponent` renders a static 7×6 grid of `LetterComponent` tiles, switching between `KeyboardComponent` (while playing) and `GameCompleteComponent` (after completion). `KeyComponent` handles press events, and `KeyboardComponent` listens for physical keyup events. Styles live in `src/styles.scss` and per-component SCSS files.
+- **Components at a glance:** `HeaderComponent` routes to `/menu` and `/help`; `MenuComponent` drives new games plus colour-accessibility toggles; `HelpComponent` shows a tile-state legend; `GameCompleteComponent` renders win/lose messaging and offers “Try a different word.”
 
 ## Zoneless change detection
-- The app runs without ZoneJS using `provideZonelessChangeDetection()`. Avoid adding `zone.js` imports and
-  rely on Angular-managed event bindings (e.g., `@HostListener`) or explicit change detector signals when subscribing to
-  observables manually.
+The app runs without ZoneJS using `provideZonelessChangeDetection()`. Avoid adding `zone.js` imports and rely on Angular-managed event bindings (e.g., `@HostListener`) or explicit change detector cues when managing manual subscriptions.
 
-## Learning next
-- Explore Angular reactive patterns using the `BehaviorSubject` streams in `GameEngineService`.
-- Extend UI/UX (animations, accessibility for keyboard input, help/settings routes) by following the existing data flow.
-- Add tests around services/components using the `.spec.ts` scaffolding in `src/app`.
+## Contributing ideas
+- Extend UI/UX by following the keyboard → engine → observable → component flow.
+- Add tests alongside new components/services with the existing `.spec.ts` patterns under `src/app`.
