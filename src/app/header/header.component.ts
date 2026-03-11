@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { IsActiveMatchOptions, Router } from '@angular/router';
+import { Component, Signal } from '@angular/core';
+import { isActive, IsActiveMatchOptions, Router } from '@angular/router';
 
 @Component({
     selector: 'app-header',
@@ -15,25 +15,23 @@ export class HeaderComponent {
         matrixParams: 'ignored'
     };
 
-    constructor(private readonly router: Router) {}
+    private readonly isInMenu: Signal<boolean>;
+    private readonly isInHelp: Signal<boolean>;
+
+    constructor(private readonly router: Router) {
+        this.isInMenu = isActive('/menu', router, this.exactMatchOptions);
+        this.isInHelp = isActive('/help', router, this.exactMatchOptions);
+    }
 
     goToMenuOrGame(): void {
-        this.router.navigate([this.isInMenu ? '/game' : '/menu']);
+        this.router.navigate([this.isInMenu() ? '/game' : '/menu']);
     }
 
     goToHelpOrGame(): void {
-        this.router.navigate([this.isInHelp ? '/game' : '/help']);
+        this.router.navigate([this.isInHelp() ? '/game' : '/help']);
     }
 
     goToGame(): void {
         this.router.navigate(['/game']);
-    }
-
-    private get isInMenu(): boolean {
-        return this.router.isActive('/menu', this.exactMatchOptions);
-    }
-
-    private get isInHelp(): boolean {
-        return this.router.isActive('/help', this.exactMatchOptions);
     }
 }
