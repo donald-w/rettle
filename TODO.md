@@ -2,28 +2,6 @@
 
 ## Angular Modernization
 
-### 2. Remove unused runtime dependencies
-
-- Status: Not started
-- Priority: Medium
-- Files:
-  - `package.json`
-  - `package-lock.json`
-- Candidates identified in current scan:
-  - `@angular/forms`
-  - `@angular/platform-browser-dynamic`
-  - `lodash`
-  - `qs`
-- Goal:
-  - Trim dependencies that are not used by the app.
-- Scope:
-  - Verify each candidate is truly unused.
-  - Remove unused packages and update the lockfile.
-  - Leave `normalize.css` in place unless you also replace its usage in `src/styles.scss`.
-- Acceptance criteria:
-  - App builds and tests pass without the removed packages.
-  - No imports or transitive assumptions remain.
-
 ### 3. Re-evaluate `withHashLocation()` based on hosting strategy
 
 - Status: Not started
