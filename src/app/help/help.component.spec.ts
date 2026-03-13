@@ -4,9 +4,11 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
+import { of } from 'rxjs';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
 import { HelpComponent } from './help.component';
+import { GameEngineService } from '../game-engine.service';
 
 @Component({ template: '', standalone: true })
 class DummyGameComponent {}
@@ -23,6 +25,13 @@ describe('HelpComponent', () => {
       providers: [
         provideRouter([{ path: 'game', component: DummyGameComponent }]),
         provideLocationMocks(),
+        {
+          provide: GameEngineService,
+          useValue: {
+            registerForValue: () => of(''),
+            registerForState: () => of('black'),
+          },
+        },
       ]
     })
     .compileComponents();

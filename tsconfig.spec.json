@@ -3,12 +3,16 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "esnext.disposable"
+    ],
     "types": [
-      "jasmine"
+      "vitest/globals"
     ]
   },
   "files": [
-    "src/test.ts",
     "src/polyfills.ts"
   ],
   "include": [

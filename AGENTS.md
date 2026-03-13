@@ -35,13 +35,11 @@ This document provides context and instructions for AI coding agents (such as Gi
 │   ├── index.html              # Entry HTML
 │   ├── main.ts                 # Angular bootstrap
 │   ├── polyfills.ts            # Browser polyfills
-│   ├── styles.scss             # Global styles
-│   └── test.ts                 # Karma test setup
+│   └── styles.scss             # Global styles
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml          # CI/CD: test → build → deploy to GitHub Pages
 ├── angular.json                # Angular CLI configuration
-├── karma.conf.js               # Karma test runner config
 ├── package.json                # Dependencies and scripts
 ├── tsconfig.json               # Base TypeScript config
 ├── tsconfig.app.json           # App-specific TS config
@@ -57,7 +55,7 @@ This document provides context and instructions for AI coding agents (such as Gi
 | `npm start` | Start dev server at `http://localhost:4200/` (runs `ng serve --host 0.0.0.0 --port 4200 --allowed-hosts`) |
 | `ng serve` | Equivalent to the `start` script without the additional host/port flags |
 | `npm run build` | Production build via `build:prod` (output to `dist/rettle/browser/`) |
-| `npm test` | Run unit tests with Karma/Jasmine (`--watch=false` by default) |
+| `npm test` | Run unit tests with Angular's unit-test builder + Vitest (`--watch=false` by default) |
 | `npm run lint` | Run ESLint |
 | `npm run lint:fix` | Auto-fix lint issues |
 | `ng generate component <name>` | Scaffold a new component |
@@ -69,21 +67,16 @@ This document provides context and instructions for AI coding agents (such as Gi
 npm test
 ```
 
-Prefer not to pass `--browsers` (let `karma.conf.js` pick the correct launcher for the environment).
-
 To run once (no watch):
 
 ```bash
 npm test -- --watch=false
 ```
 
-Troubleshooting / forcing a browser (avoid unless needed):
-- Local/Linux (non-container): `npm test -- --browsers=ChromeHeadless`
-- Devcontainer: use `npm test -- --browsers=ChromeHeadlessNoSandbox` (sandboxed `ChromeHeadless` may fail with "Operation not permitted")
+Vitest runs the suite in `jsdom` by default; avoid passing `--browsers` unless you are intentionally testing in a real browser environment.
 
-All 53 tests should pass. Tests use:
-- **Jasmine** for assertions and test structure
-- **Karma** as the test runner
+All 68 tests should pass. Tests use:
+- **Vitest** for assertions, spies, and the test runner
 - **HttpClientTestingModule** for mocking HTTP requests
 - **RouterTestingModule** for routing tests
 
@@ -172,9 +165,9 @@ Routes are exported from `src/app/app-routing.module.ts` as `routes` (no NgModul
 
 - Each component/service has a corresponding `.spec.ts` file
 - Use `TestBed.configureTestingModule()` for test setup
-- Mock services with `jasmine.createSpy()` and custom mock objects
+- Mock services with `vi.fn()` and small typed mock objects
 - Use `HttpClientTestingModule` for HTTP mocking
-- Prefer `expect(...).toBeTrue()`, `expect(...).toBeFalse()` for booleans
+- Prefer `expect(...).toBe(true)`, `expect(...).toBe(false)` for booleans
 
 ## Common Tasks
 
@@ -236,7 +229,7 @@ The GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on push to `ma
 2. **Setup Node.js 22** with npm cache
 3. **Install dependencies** with `npm ci`
 4. **Run lint** with `npm run lint`
-5. **Run tests** with `npm test -- --watch=false --browsers=ChromeHeadless`
+5. **Run tests** with `npm test -- --watch=false`
 6. **Build for production** with `npm run build:prod`
 7. **Deploy to GitHub Pages** (output at `dist/rettle/browser`)
 
@@ -256,7 +249,7 @@ The GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on push to `ma
 
 ### Development
 - TypeScript 5.9
-- Karma + Jasmine (testing)
+- Vitest + jsdom (testing)
 - Angular CLI
 
 ## Additional Notes

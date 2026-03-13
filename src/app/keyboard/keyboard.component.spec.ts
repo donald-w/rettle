@@ -1,3 +1,4 @@
+import type { MockedObject } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
@@ -6,66 +7,69 @@ import { KeyboardComponent } from './keyboard.component';
 import { GameEngineService } from '../game-engine.service';
 
 describe('KeyboardComponent', () => {
-  let component: KeyboardComponent;
-  let fixture: ComponentFixture<KeyboardComponent>;
-  let engineSpy: jasmine.SpyObj<GameEngineService>;
+    let component: KeyboardComponent;
+    let fixture: ComponentFixture<KeyboardComponent>;
+    let engineSpy: MockedObject<Pick<GameEngineService, 'registerKey' | 'keyPressed'>>;
 
-  beforeEach(async () => {
-    engineSpy = jasmine.createSpyObj<GameEngineService>('GameEngineService', ['keyPressed', 'registerKey']);
-    engineSpy.registerKey.and.returnValue(of(''));
+    beforeEach(async () => {
+        engineSpy = {
+            keyPressed: vi.fn().mockName('GameEngineService.keyPressed'),
+            registerKey: vi.fn().mockName('GameEngineService.registerKey')
+        };
+        engineSpy.registerKey.mockReturnValue(of(''));
 
-    await TestBed.configureTestingModule({
-      imports: [KeyboardComponent],
-      providers: [{ provide: GameEngineService, useValue: engineSpy }],
-    }).compileComponents();
-  });
+        await TestBed.configureTestingModule({
+            imports: [KeyboardComponent],
+            providers: [{ provide: GameEngineService, useValue: engineSpy }],
+        }).compileComponents();
+    });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(KeyboardComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(KeyboardComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-  it('should render 3 rows with correct key count', () => {
-    const rows = fixture.debugElement.queryAll(By.css('.keyboard-row'));
-    const keys = fixture.debugElement.queryAll(By.css('app-key'));
+    it('should render 3 rows with correct key count', () => {
+        const rows = fixture.debugElement.queryAll(By.css('.keyboard-row'));
+        const keys = fixture.debugElement.queryAll(By.css('app-key'));
 
-    expect(rows.length).toBe(3);
-    expect(keys.length).toBe(10 + 9 + 9);
-  });
+        expect(rows.length).toBe(3);
+        expect(keys.length).toBe(10 + 9 + 9);
+    });
 
-  it('should call keyPressed when a key is clicked', () => {
-    const keyButton = fixture.debugElement.query(By.css('app-key[label="Q"] button')).nativeElement as HTMLButtonElement;
-    keyButton.click();
+    it('should call keyPressed when a key is clicked', () => {
+        const keyButton = fixture.debugElement.query(By.css('app-key[label="Q"] button')).nativeElement as HTMLButtonElement;
+        keyButton.click();
 
-    expect(engineSpy.keyPressed).toHaveBeenCalledWith('Q');
-  });
+        expect(engineSpy.keyPressed).toHaveBeenCalledWith('Q');
+    });
 
-  it('should map Enter and Backspace labels on physical keyup', () => {
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter' }));
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Backspace' }));
+    it('should map Enter and Backspace labels on physical keyup', () => {
+        document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter' }));
+        document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Backspace' }));
 
-    expect(engineSpy.keyPressed).toHaveBeenCalledWith('Enter');
-    expect(engineSpy.keyPressed).toHaveBeenCalledWith('Back');
-  });
+        expect(engineSpy.keyPressed).toHaveBeenCalledWith('Enter');
+        expect(engineSpy.keyPressed).toHaveBeenCalledWith('Back');
+    });
 
-  it('should ignore non-letter keys except Enter/Backspace', () => {
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Tab' }));
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: '1' }));
+    it('should ignore non-letter keys except Enter/Backspace', () => {
+        document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Tab' }));
+        document.dispatchEvent(new KeyboardEvent('keyup', { key: '1' }));
 
-    expect(engineSpy.keyPressed).not.toHaveBeenCalledWith('Tab');
-    expect(engineSpy.keyPressed).not.toHaveBeenCalledWith('1');
-  });
+        expect(engineSpy.keyPressed).not.toHaveBeenCalledWith('Tab');
+        expect(engineSpy.keyPressed).not.toHaveBeenCalledWith('1');
+    });
 
-  it('should forward letter keyup events uppercased', () => {
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'a' }));
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'z' }));
+    it('should forward letter keyup events uppercased', () => {
+        document.dispatchEvent(new KeyboardEvent('keyup', { key: 'a' }));
+        document.dispatchEvent(new KeyboardEvent('keyup', { key: 'z' }));
 
-    expect(engineSpy.keyPressed).toHaveBeenCalledWith('A');
-    expect(engineSpy.keyPressed).toHaveBeenCalledWith('Z');
-  });
+        expect(engineSpy.keyPressed).toHaveBeenCalledWith('A');
+        expect(engineSpy.keyPressed).toHaveBeenCalledWith('Z');
+    });
 });

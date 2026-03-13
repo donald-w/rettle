@@ -91,24 +91,10 @@
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": [
-              "src/polyfills.ts"
-            ],
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-              "styles": [
-                "src/styles.scss"
-              ],
-              "scripts": []
-            }
+            "runnerConfig": true
+          }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",

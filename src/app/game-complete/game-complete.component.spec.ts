@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
 
@@ -6,52 +7,55 @@ import { GameOutcome } from '../game-engine.service';
 import { GameEngineService } from '../game-engine.service';
 
 describe('GameCompleteComponent', () => {
-  let fixture: ComponentFixture<GameCompleteComponent>;
-  let outcome$: BehaviorSubject<GameOutcome>;
-  let mockGameEngine: { gameOutcome$: BehaviorSubject<GameOutcome>; newGame: jasmine.Spy };
-
-  beforeEach(async () => {
-    outcome$ = new BehaviorSubject<GameOutcome>('won');
-    mockGameEngine = {
-      gameOutcome$: outcome$,
-      newGame: jasmine.createSpy('newGame')
+    let fixture: ComponentFixture<GameCompleteComponent>;
+    let outcome$: BehaviorSubject<GameOutcome>;
+    let mockGameEngine: {
+        gameOutcome$: BehaviorSubject<GameOutcome>;
+        newGame: Mock;
     };
 
-    await TestBed.configureTestingModule({
-      imports: [GameCompleteComponent],
-      providers: [
-        {
-          provide: GameEngineService,
-          useValue: mockGameEngine
-        }
-      ]
-    }).compileComponents();
+    beforeEach(async () => {
+        outcome$ = new BehaviorSubject<GameOutcome>('won');
+        mockGameEngine = {
+            gameOutcome$: outcome$,
+            newGame: vi.fn()
+        };
 
-    fixture = TestBed.createComponent(GameCompleteComponent);
-    fixture.detectChanges();
-  });
+        await TestBed.configureTestingModule({
+            imports: [GameCompleteComponent],
+            providers: [
+                {
+                    provide: GameEngineService,
+                    useValue: mockGameEngine
+                }
+            ]
+        }).compileComponents();
 
-  it('should create', () => {
-    expect(fixture.componentInstance).toBeTruthy();
-  });
+        fixture = TestBed.createComponent(GameCompleteComponent);
+        fixture.detectChanges();
+    });
 
-  it('should show "Well done" when won', () => {
-    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain('Well done');
-  });
+    it('should create', () => {
+        expect(fixture.componentInstance).toBeTruthy();
+    });
 
-  it('should show "Better luck next time" when lost', () => {
-    outcome$.next('lost');
-    fixture.detectChanges();
+    it('should show "Well done" when won', () => {
+        const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+        expect(text).toContain('Well done');
+    });
 
-    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain('Better luck next time');
-  });
+    it('should show "Better luck next time" when lost', () => {
+        outcome$.next('lost');
+        fixture.detectChanges();
 
-  it('should start a new game on button click', () => {
-    const button = (fixture.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement;
-    button.click();
+        const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+        expect(text).toContain('Better luck next time');
+    });
 
-    expect(mockGameEngine.newGame).toHaveBeenCalled();
-  });
+    it('should start a new game on button click', () => {
+        const button = (fixture.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement;
+        button.click();
+
+        expect(mockGameEngine.newGame).toHaveBeenCalled();
+    });
 });
