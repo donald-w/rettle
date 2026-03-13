@@ -2,22 +2,6 @@
 
 ## Angular Modernization
 
-### 1. Remove unnecessary `enableProdMode()` call
-
-- Status: Not started
-- Priority: Medium
-- Files:
-  - `src/main.ts`
-- Goal:
-  - Remove explicit `enableProdMode()` because Angular CLI production builds already enable production mode.
-- Scope:
-  - Delete the import and the conditional call.
-  - Verify build behavior remains unchanged.
-- Acceptance criteria:
-  - Production build succeeds.
-  - No runtime behavior change.
-  - `src/main.ts` is reduced to the minimal bootstrap setup.
-
 ### 2. Remove unused runtime dependencies
 
 - Status: Not started
