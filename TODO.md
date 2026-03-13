@@ -2,7 +2,7 @@
 
 ## Angular Modernization
 
-### 6. Convert presentational component inputs to signal inputs where useful
+### 1. Convert presentational component inputs to signal inputs where useful
 
 - Status: Not started
 - Priority: High
@@ -24,7 +24,7 @@
   - Inputs remain strongly typed.
   - Templates and tests continue to behave the same way.
 
-### 7. Move presentational components to `OnPush` and remove manual change detection
+### 2. Move presentational components to `OnPush` and remove manual change detection
 
 - Status: Not started
 - Priority: High
@@ -45,7 +45,7 @@
   - Rendering stays correct in zoneless mode.
   - Component tests cover the final render state.
 
-### 9. Replace hard-coded board markup with `@for`
+### 3. Replace hard-coded board markup with `@for`
 
 - Status: Not started
 - Priority: Medium
@@ -65,7 +65,7 @@
   - No visual regression.
   - Template size is materially reduced.
 
-### 10. Remove debug-only and dead code from the game engine
+### 4. Remove debug-only and dead code from the game engine
 
 - Status: Not started
 - Priority: Low
@@ -85,29 +85,6 @@
   - No dead private methods remain.
   - No browser-global debug API is installed by default.
   - Tests are updated to reflect the intended debug story.
-
-### 11. Align tests with zoneless runtime
-
-- Status: Completed
-- Priority: Medium
-- Files:
-  - Relevant `*.spec.ts` files
-  - Potentially shared test setup
-- Goal:
-  - Ensure component and service tests reflect the production zoneless setup.
-- Scope:
-  - Add `provideZonelessChangeDetection()` where appropriate in TestBed configuration.
-  - Remove assumptions in tests that depend on legacy change-detection behavior.
-- Suggested approach:
-  - Start with component specs that render state-driven UI.
-  - Keep the migration incremental if a shared setup file is not worth introducing.
-- Acceptance criteria:
-  - Test suite passes under the zoneless configuration.
-  - No flaky specs caused by implicit ZoneJS-era assumptions.
-- Notes:
-  - Added `provideZonelessChangeDetection()` explicitly to component specs that create Angular components through TestBed.
-  - Replaced `fixture.whenStable()` in router-driven component tests with `vi.waitFor(...)` assertions on navigation outcomes.
-  - Kept the change local to specs rather than introducing a shared global test setup.
 
 ## Notes
 
