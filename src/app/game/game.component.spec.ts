@@ -1,6 +1,7 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 
 import { GameComponent } from './game.component';
 import { GameEngineService } from '../game-engine.service';
@@ -8,16 +9,29 @@ import { GameEngineService } from '../game-engine.service';
 describe('GameComponent', () => {
   let component: GameComponent;
   let fixture: ComponentFixture<GameComponent>;
+  const gameOutcome = signal<'playing' | 'won' | 'lost'>('playing');
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [GameComponent],
-      providers: [provideHttpClientTesting()],
-    })
-    .compileComponents();
+      providers: [
+        {
+          provide: GameEngineService,
+          useValue: {
+            gameOutcome,
+            registerForValue: () => of(''),
+            registerForState: () => of('black'),
+            registerKey: () => of('light'),
+            keyPressed: vi.fn(),
+            newGame: vi.fn(),
+          },
+        },
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
+    gameOutcome.set('playing');
     fixture = TestBed.createComponent(GameComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -34,7 +48,7 @@ describe('GameComponent', () => {
     expect(rows.length).toBe(7);
     expect(letters.length).toBe(42);
 
-    rows.forEach(row => {
+    rows.forEach((row) => {
       expect(row.queryAll(By.css('app-letter')).length).toBe(6);
     });
   });
@@ -56,8 +70,7 @@ describe('GameComponent', () => {
   });
 
   it('should replace the keyboard when the game is complete', () => {
-    const gameEngine = TestBed.inject(GameEngineService);
-    gameEngine.gameOutcome$.next('won');
+    gameOutcome.set('won');
     fixture.detectChanges();
 
     expect(fixture.debugElement.queryAll(By.css('app-keyboard')).length).toBe(0);

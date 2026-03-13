@@ -26,7 +26,7 @@
 
 ### 4. Replace subject-map game state with a typed signal-based store
 
-- Status: Not started
+- Status: Completed
 - Priority: High
 - Files:
   - `src/app/game-engine.service.ts`
@@ -48,6 +48,10 @@
   - Existing tests still pass after being updated for the new state model.
   - No component needs to cast observables back to `BehaviorSubject` in tests.
   - Board, key colors, and win/loss states render exactly as before.
+- Notes:
+  - Replaced the lazy `Map<string, BehaviorSubject<string>>` state with signal-backed board, keyboard, cursor, target-word, and outcome state.
+  - Kept `registerForValue()`, `registerForState()`, and `registerKey()` as observable adapters so existing presentational components can migrate incrementally while game-complete state now reads from a signal directly.
+  - Added typed state readers used by the updated specs instead of mutating subjects directly.
 
 ### 5. Introduce typed tile and key state unions
 
