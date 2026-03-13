@@ -1,4 +1,4 @@
-@if (outcome$ | async; as outcome) {
+@if (gameOutcome(); as outcome) {
   <div class="game-complete">
     <div class="message" aria-live="polite">{{ getMessage(outcome) }}</div>
     <button type="button" class="try-different rettle-primary-button" (click)="onTryDifferentWord()">Try a different word</button>

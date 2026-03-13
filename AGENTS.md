@@ -102,7 +102,8 @@ UI renders tile colors and letters
 
 - **GameEngineService** (`game-engine.service.ts`)
   - Tracks board state, current row/column, and target word
-  - Exposes `BehaviorSubject` observables for each cell and key
+  - Stores board, keyboard, cursor, target word, and outcome in Angular signals
+  - Exposes observable adapters for cell values, cell state, keyboard state, and game outcome while components migrate
   - Handles input via `keyPressed(key)`, validates guesses, colors tiles/keys
   - Provides `window.tellme()` debug helper to reveal the answer
 
@@ -156,8 +157,8 @@ Routes are exported from `src/app/app-routing.module.ts` as `routes` (no NgModul
 - Zoneless change detection enabled with `provideZonelessChangeDetection()`; avoid reintroducing `zone.js`.
 - HTTP via `provideHttpClient(withInterceptorsFromDi())`.
 - Use `@Input()` decorators for component inputs
-- Use RxJS `BehaviorSubject` for state management
-- Subscribe to observables in `ngOnInit()`, display via `async` pipe when possible
+- Prefer Angular signals for app state; use RxJS observables when integrating with existing component APIs or external streams
+- Display observables via the `async` pipe when possible
 - Use SCSS for component styles (scoped per component)
 - `SettingsService` persists colour-accessibility mode to `localStorage`; wrap storage access in try/catch inside helpers, not at import boundaries.
 
@@ -194,7 +195,7 @@ Services are `providedIn: 'root'` by default (singleton).
 
 - Edit `GameEngineService` for core logic changes
 - The `processGuess()` function handles letter coloring (green/yellow/grey)
-- State is managed via RxJS subject maps (`gameBoard`, `gameState`, `keyboardState`)
+- State is managed in a signal-backed store inside `GameEngineService`, with observable adapters still available for existing components
 
 ### Updating the Word List
 
@@ -208,7 +209,7 @@ Services are `providedIn: 'root'` by default (singleton).
 
 - ✅ Run `npm test` before committing to ensure tests pass
 - ✅ Follow existing patterns for components and services
-- ✅ Use RxJS observables and the `async` pipe for reactive state
+- ✅ Prefer Angular signals for internal app state and use observable adapters or the `async` pipe where they fit existing component boundaries
 - ✅ Keep component logic minimal; delegate to services
 - ✅ Add corresponding `.spec.ts` tests for new code
 - ✅ Use strict TypeScript typing

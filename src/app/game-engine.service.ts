@@ -1,38 +1,60 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Injectable, Injector, computed, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { Observable } from 'rxjs';
 import { DictionaryService } from './dictionary.service';
 
 export type GameOutcome = 'playing' | 'won' | 'lost';
+
+interface BoardCell {
+  value: string;
+  state: string;
+}
+
+type BoardState = BoardCell[][];
+type KeyboardState = Record<string, string>;
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameEngineService {
-  word: string = "";
-  wordlength = 6;
-  maxAttempts = 7;
-  currentWord = 1;
-  currentPosition = 1;
+  readonly wordlength = 6;
+  readonly maxAttempts = 7;
 
-  gameBoard = new Map<string, BehaviorSubject<string>>();
-  gameState = new Map<string, Subject<string>>();
-  keyboardState = new Map<string, BehaviorSubject<string>>();
-  readonly gameOutcome$ = new BehaviorSubject<GameOutcome>('playing');
+  private readonly injector = inject(Injector);
+  private readonly boardSignal = signal<BoardState>(this.createBoardState());
+  private readonly keyboardStateSignal = signal<KeyboardState>({});
+  private readonly currentWordSignal = signal(1);
+  private readonly currentPositionSignal = signal(1);
+  private readonly wordSignal = signal('');
+  private readonly gameOutcomeSignal = signal<GameOutcome>('playing');
+  readonly gameOutcome = this.gameOutcomeSignal.asReadonly();
   private dictionaryReady = false;
 
-  constructor(private dictionary: DictionaryService) {
+  constructor(private readonly dictionary: DictionaryService) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).tellme = () => {
-      return this.word;
-    };
+    (window as any).tellme = () => this.word;
 
     this.dictionary.dictionaryReady$.subscribe((ready) => {
-      if (ready) {
-        this.dictionaryReady = true;
-        this.word = this.dictionary.getWordOfTheDay(new Date());
-        this.resetBoardState();
+      if (!ready) {
+        return;
       }
+
+      this.dictionaryReady = true;
+      this.wordSignal.set(this.dictionary.getWordOfTheDay(new Date()));
+      this.resetBoardState();
     });
+  }
+
+  get word(): string {
+    return this.wordSignal();
+  }
+
+  get currentWord(): number {
+    return this.currentWordSignal();
+  }
+
+  get currentPosition(): number {
+    return this.currentPositionSignal();
   }
 
   newGame(seed?: number): void {
@@ -41,7 +63,7 @@ export class GameEngineService {
     }
 
     const randomSeed = seed ?? Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-    this.word = this.dictionary.getWordBySeed(randomSeed);
+    this.wordSignal.set(this.dictionary.getWordBySeed(randomSeed));
     this.resetBoardState();
   }
 
@@ -54,218 +76,208 @@ export class GameEngineService {
       return true;
     }
 
-    for (const cell of this.gameBoard.values()) {
-      if (cell.getValue() !== '') {
-        return true;
-      }
-    }
-
-    return false;
+    return this.boardSignal().some((row) => row.some((cell) => cell.value !== ''));
   }
 
   keyPressed(key: string): void {
-
-    if (this.gameOutcome$.getValue() !== 'playing') {
+    if (this.gameOutcomeSignal() !== 'playing') {
       return;
     }
 
-    if (key === "Enter") {
-      if (this.currentPosition === this.wordlength + 1) {
-        let guess = "";
-
-        for (let i = 1; i < this.wordlength + 1; i++) {
-          const cellKey = this.currentWord + "-" + i;
-          let sub = this.gameBoard.get(cellKey);
-          if (!sub) {
-            sub = new BehaviorSubject<string>("");
-            this.gameBoard.set(cellKey, sub);
-          }
-
-          const letter = sub.getValue();
-
-          guess += letter;
-        }
-
-        // eslint-disable-next-line no-console
-        console.log("guess was: " + guess);
-
-        if (!this.dictionary.isWord(guess)) {
-          this.setWordColor("red");
-
-          return;
-        }
-
-        const result = processGuess(this.word, guess);
-
-        for (let i = 1; i < this.wordlength + 1; i++) {
-          const cellKey = this.currentWord + "-" + i;
-          let sub = this.gameBoard.get(cellKey);
-          if (!sub) {
-            sub = new BehaviorSubject<string>("");
-            this.gameBoard.set(cellKey, sub);
-          }
-
-          let state = this.gameState.get(cellKey);
-          if (!state) {
-            state = new BehaviorSubject<string>("black");
-            this.gameState.set(cellKey, state);
-          }
-
-          const letter = sub.getValue();
-
-          if (result[i-1] === 'grey') {
-            if (this.getKeyColor(letter) === 'light') {
-              this.setKeyColor(letter,'dark');
-            }
-          }
-          if (result[i-1] === 'green') {
-            this.setKeyColor(letter,'green');
-          }
-          if (result[i-1] === 'yellow') {
-            if (!(this.getKeyColor(letter) === 'green')) {
-              this.setKeyColor(letter,'yellow');
-            }
-          }
-
-
-          state?.next(result[i-1]);
-        }
-
-        const won = result.every((state) => state === 'green');
-        if (won) {
-          this.gameOutcome$.next('won');
-        } else if (this.currentWord >= this.maxAttempts) {
-          this.gameOutcome$.next('lost');
-        }
-
-        this.currentPosition = 1;
-        this.currentWord++;
-      } else {
-        // Ignore since it's not the last entry in the word
-      }
-    } else if (key === "Back") {
-      if (this.currentPosition === this.wordlength + 1) {
-        this.setWordColor("clear");
-      }
-
-      if (this.currentPosition > 1) {
-        this.currentPosition--;
-        const cellKey = this.currentWord + "-" + this.currentPosition;
-        let sub = this.gameBoard.get(cellKey);
-        if (!sub) {
-          sub = new BehaviorSubject<string>("");
-          this.gameBoard.set(cellKey, sub);
-        }
-        sub.next("");
-      }
-    } else {
-      if (this.currentPosition == this.wordlength + 1) {
-        // Ignore.  Last position, and not enter
-      } else {
-        // Normal key.  Advance
-        const cellKey = this.currentWord + "-" + this.currentPosition++;
-        let sub = this.gameBoard.get(cellKey);
-        if (!sub) {
-          sub = new BehaviorSubject<string>("");
-          this.gameBoard.set(cellKey, sub);
-        }
-        sub.next(key);
-      }
+    if (key === 'Enter') {
+      this.handleEnter();
+      return;
     }
-  }
 
-  private shareResult() {
-    navigator.share({text: "Failed guess! http://www.google.com/search?q=" + ""})
-  }
-
-  private setWordColor(colour: string) {
-    for (let i = 1; i < this.wordlength + 1; i++) {
-      const state = this.gameState.get(this.currentWord + "-" + i);
-      state?.next(colour);
+    if (key === 'Back') {
+      this.handleBackspace();
+      return;
     }
+
+    this.handleLetter(key);
   }
 
   registerForValue(word: number, position: number): Observable<string> {
-    const key = word + "-" + position;
-    const existing = this.gameBoard.get(key);
-    if (existing) {
-      return existing;
-    }
-
-    const sub = new BehaviorSubject<string>("");
-    this.gameBoard.set(key, sub);
-    return sub;
+    return toObservable(
+      computed(() => this.getCell(word, position).value),
+      { injector: this.injector }
+    );
   }
 
   registerForState(word: number, position: number): Observable<string> {
-    const key = word + "-" + position;
-    const existing = this.gameState.get(key);
-    if (existing) {
-      return existing;
-    }
-
-    const sub = new BehaviorSubject<string>("black");
-    this.gameState.set(key, sub);
-    return sub;
+    return toObservable(
+      computed(() => this.getCell(word, position).state),
+      { injector: this.injector }
+    );
   }
 
   registerKey(key: string): Observable<string> {
-    const existing = this.keyboardState.get(key);
-    if (existing) {
-      return existing;
-    }
-
-    const sub = new BehaviorSubject<string>("light");
-    this.keyboardState.set(key, sub);
-    return sub;
+    return toObservable(
+      computed(() => this.keyboardStateSignal()[key] ?? 'light'),
+      { injector: this.injector }
+    );
   }
 
-  setKeyColor(key: string, color: string) {
-    let sub = this.keyboardState.get(key);
-    if (!sub) {
-      sub = new BehaviorSubject<string>('light');
-      this.keyboardState.set(key, sub);
-    }
-    sub.next(color)
+  getCellValue(word: number, position: number): string {
+    return this.getCell(word, position).value;
   }
 
-  getKeyColor(key: string) {
-    let sub = this.keyboardState.get(key);
-    if (!sub) {
-      sub = new BehaviorSubject<string>('light');
-      this.keyboardState.set(key, sub);
+  getCellState(word: number, position: number): string {
+    return this.getCell(word, position).state;
+  }
+
+  setKeyColor(key: string, color: string): void {
+    this.keyboardStateSignal.update((keyboardState) => ({
+      ...keyboardState,
+      [key]: color,
+    }));
+  }
+
+  getKeyColor(key: string): string {
+    return this.keyboardStateSignal()[key] ?? 'light';
+  }
+
+  private handleEnter(): void {
+    if (this.currentPosition !== this.wordlength + 1) {
+      return;
     }
-    return sub.getValue();
+
+    const guess = this.getCurrentGuess();
+
+    if (!this.dictionary.isWord(guess)) {
+      this.setWordColor('red');
+      return;
+    }
+
+    const result = processGuess(this.word, guess);
+
+    for (let i = 1; i <= this.wordlength; i++) {
+      const letter = this.getCellValue(this.currentWord, i);
+      const state = result[i - 1];
+
+      if (state === 'grey' && this.getKeyColor(letter) === 'light') {
+        this.setKeyColor(letter, 'dark');
+      }
+
+      if (state === 'green') {
+        this.setKeyColor(letter, 'green');
+      }
+
+      if (state === 'yellow' && this.getKeyColor(letter) !== 'green') {
+        this.setKeyColor(letter, 'yellow');
+      }
+
+      this.setCellState(this.currentWord, i, state);
+    }
+
+    const won = result.every((state) => state === 'green');
+    if (won) {
+      this.gameOutcomeSignal.set('won');
+    } else if (this.currentWord >= this.maxAttempts) {
+      this.gameOutcomeSignal.set('lost');
+    }
+
+    this.currentPositionSignal.set(1);
+    this.currentWordSignal.update((word) => word + 1);
+  }
+
+  private handleBackspace(): void {
+    if (this.currentPosition === this.wordlength + 1) {
+      this.setWordColor('clear');
+    }
+
+    if (this.currentPosition <= 1) {
+      return;
+    }
+
+    const nextPosition = this.currentPosition - 1;
+    this.currentPositionSignal.set(nextPosition);
+    this.setCellValue(this.currentWord, nextPosition, '');
+  }
+
+  private handleLetter(key: string): void {
+    if (this.currentPosition === this.wordlength + 1) {
+      return;
+    }
+
+    const position = this.currentPosition;
+    this.setCellValue(this.currentWord, position, key);
+    this.currentPositionSignal.update((currentPosition) => currentPosition + 1);
+  }
+
+  private createBoardState(): BoardState {
+    return Array.from({ length: this.maxAttempts }, () =>
+      Array.from({ length: this.wordlength }, () => ({
+        value: '',
+        state: 'black',
+      }))
+    );
+  }
+
+  private getCurrentGuess(): string {
+    return this.boardSignal()[this.currentWord - 1]
+      .map((cell) => cell.value)
+      .join('');
+  }
+
+  private getCell(word: number, position: number): BoardCell {
+    return this.boardSignal()[word - 1][position - 1];
+  }
+
+  private setCellValue(word: number, position: number, value: string): void {
+    this.updateBoardCell(word, position, { value });
+  }
+
+  private setCellState(word: number, position: number, state: string): void {
+    this.updateBoardCell(word, position, { state });
+  }
+
+  private updateBoardCell(word: number, position: number, patch: Partial<BoardCell>): void {
+    this.boardSignal.update((boardState) => {
+      const rowIndex = word - 1;
+      const positionIndex = position - 1;
+      const nextBoardState = boardState.slice();
+      const nextRow = boardState[rowIndex].slice();
+
+      nextRow[positionIndex] = {
+        ...nextRow[positionIndex],
+        ...patch,
+      };
+      nextBoardState[rowIndex] = nextRow;
+
+      return nextBoardState;
+    });
+  }
+
+  private setWordColor(colour: string): void {
+    this.boardSignal.update((boardState) => {
+      const rowIndex = this.currentWord - 1;
+      const nextBoardState = boardState.slice();
+      nextBoardState[rowIndex] = boardState[rowIndex].map((cell) => ({
+        ...cell,
+        state: colour,
+      }));
+
+      return nextBoardState;
+    });
   }
 
   private resetBoardState(): void {
-    this.currentWord = 1;
-    this.currentPosition = 1;
-
-    this.gameOutcome$.next('playing');
-
-    for (const cell of this.gameBoard.values()) {
-      cell.next("");
-    }
-
-    for (const state of this.gameState.values()) {
-      state.next("black");
-    }
-
-    for (const key of this.keyboardState.values()) {
-      key.next("light");
-    }
+    this.currentWordSignal.set(1);
+    this.currentPositionSignal.set(1);
+    this.gameOutcomeSignal.set('playing');
+    this.boardSignal.set(this.createBoardState());
+    this.keyboardStateSignal.set({});
   }
 }
 
-function processGuess(word: string, guess: string) : string[] {
+function processGuess(word: string, guess: string): string[] {
   const wordArray = word.split('');
   const guessArray = guess.split('');
+  const result: string[] = [];
 
-  const result : Array<string> = [];
-
-  for(let i = 0; i < wordArray.length; i++) {
-    const greenOrGrey = (wordArray[i] === guessArray[i]);
+  for (let i = 0; i < wordArray.length; i++) {
+    const greenOrGrey = wordArray[i] === guessArray[i];
     result.push(greenOrGrey ? 'green' : 'grey');
 
     if (greenOrGrey) {
@@ -274,19 +286,15 @@ function processGuess(word: string, guess: string) : string[] {
     }
   }
 
-  for(let i = 0; i < guessArray.length; i++) {
-    for(let j = 0; j < wordArray.length; j++) {
+  for (let i = 0; i < guessArray.length; i++) {
+    for (let j = 0; j < wordArray.length; j++) {
       if (guessArray[i] === wordArray[j]) {
         wordArray[j] = ',';
         result[i] = 'yellow';
+        break;
       }
     }
   }
 
-  // console.log(guessArray);
-  // console.log(wordArray);
-  // console.log(result);
-
   return result;
-
 }

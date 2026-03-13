@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
 import { GameEngineService, GameOutcome } from '../game-engine.service';
 
 @Component({
@@ -7,11 +6,9 @@ import { GameEngineService, GameOutcome } from '../game-engine.service';
   templateUrl: './game-complete.component.html',
   styleUrls: ['./game-complete.component.scss'],
   standalone: true,
-  imports: [AsyncPipe]
+  imports: []
 })
 export class GameCompleteComponent {
-  readonly outcome$ = this.gameEngine.gameOutcome$;
-
   constructor(private readonly gameEngine: GameEngineService) {}
 
   getMessage(outcome: GameOutcome): string {
@@ -21,4 +18,6 @@ export class GameCompleteComponent {
   onTryDifferentWord(): void {
     this.gameEngine.newGame();
   }
+
+  protected readonly gameOutcome = this.gameEngine.gameOutcome;
 }

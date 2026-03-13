@@ -57,10 +57,8 @@
   </div>
 </div>
 
-@if (outcome$ | async; as outcome) {
-  @if (outcome === 'playing') {
-    <app-keyboard></app-keyboard>
-  } @else {
-    <app-game-complete></app-game-complete>
-  }
+@if (gameOutcome() === 'playing') {
+  <app-keyboard></app-keyboard>
+} @else {
+  <app-game-complete></app-game-complete>
 }

@@ -21,7 +21,7 @@ Rettle is an Angular 21 single-page web application word guessing game with six-
 ## Architecture and files to know
 - **Bootstrap:** Standalone `bootstrapApplication` in `src/main.ts` with `provideRouter(routes, withHashLocation())`, `provideHttpClient(withInterceptorsFromDi())`, and `provideZonelessChangeDetection()`.
 - **Routing:** `src/app/app-routing.module.ts` exports `routes` mapping `/game`, `/help`, and `/menu`. `AppComponent` wraps the persistent `HeaderComponent` plus `router-outlet`.
-- **State and logic:** `GameEngineService` manages board/keyboard subjects, row/column tracking, guess validation, and win/loss detection. `DictionaryService` streams readiness, builds the dictionary, and exposes deterministic selection helpers.
+- **State and logic:** `GameEngineService` manages signal-backed board, keyboard, cursor, target-word, and outcome state, while still exposing observable adapters for current components. It handles guess validation and win/loss detection. `DictionaryService` streams readiness, builds the dictionary, and exposes deterministic selection helpers.
 - **UI composition:** `GameComponent` renders a static 7×6 grid of `LetterComponent` tiles, switching between `KeyboardComponent` (while playing) and `GameCompleteComponent` (after completion). `KeyComponent` handles press events, and `KeyboardComponent` listens for physical keyup events. Styles live in `src/styles.scss` and per-component SCSS files.
 - **Components at a glance:** `HeaderComponent` routes to `/menu` and `/help`; `MenuComponent` drives new games plus colour-accessibility toggles; `HelpComponent` shows a tile-state legend; `GameCompleteComponent` renders win/lose messaging and offers “Try a different word.”
 
