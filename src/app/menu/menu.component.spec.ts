@@ -1,3 +1,4 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import type { Mock, MockedObject } from "vitest";
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
@@ -32,6 +33,7 @@ describe('MenuComponent', () => {
         await TestBed.configureTestingModule({
             imports: [MenuComponent],
             providers: [
+                provideZonelessChangeDetection(),
                 provideRouter([{ path: 'game', component: MenuComponent }]),
                 provideLocationMocks(),
                 {
@@ -80,9 +82,7 @@ describe('MenuComponent', () => {
     it('should navigate back to the game when button is clicked', async () => {
         const button = fixture.nativeElement.querySelector('button[routerlink]') as HTMLButtonElement | null;
         button?.click();
-        await fixture.whenStable();
-
-        expect(location.path()).toBe('/game');
+        await vi.waitFor(() => expect(location.path()).toBe('/game'));
     });
 
     it('should render the colour accessibility mode toggle', () => {
@@ -115,11 +115,11 @@ describe('MenuComponent', () => {
 
         newGameButton.click();
         fixture.detectChanges();
-        await fixture.whenStable();
-
-        expect(hasOngoingGameSpy).toHaveBeenCalled();
-        expect(newGameSpy).toHaveBeenCalled();
-        expect(location.path()).toBe('/game');
+        await vi.waitFor(() => {
+            expect(hasOngoingGameSpy).toHaveBeenCalled();
+            expect(newGameSpy).toHaveBeenCalled();
+            expect(location.path()).toBe('/game');
+        });
     });
 
     it('should ask for confirmation when progress exists', async () => {
@@ -129,11 +129,11 @@ describe('MenuComponent', () => {
 
         newGameButton.click();
         fixture.detectChanges();
-        await fixture.whenStable();
-
-        expect(window.confirm).toHaveBeenCalled();
-        expect(newGameSpy).toHaveBeenCalled();
-        expect(location.path()).toBe('/game');
+        await vi.waitFor(() => {
+            expect(window.confirm).toHaveBeenCalled();
+            expect(newGameSpy).toHaveBeenCalled();
+            expect(location.path()).toBe('/game');
+        });
     });
 
     it('should not start a new game if confirmation is declined', async () => {
@@ -143,9 +143,8 @@ describe('MenuComponent', () => {
 
         newGameButton.click();
         fixture.detectChanges();
-        await fixture.whenStable();
+        await vi.waitFor(() => expect(window.confirm).toHaveBeenCalled());
 
-        expect(window.confirm).toHaveBeenCalled();
         expect(newGameSpy).not.toHaveBeenCalled();
         expect(location.path()).not.toBe('/game');
     });

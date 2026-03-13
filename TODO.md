@@ -2,80 +2,6 @@
 
 ## Angular Modernization
 
-### 3. Decide whether to keep Karma/Jasmine or migrate to Vitest
-
-- Status: Completed
-- Priority: Medium
-- Files:
-  - `package.json`
-  - `angular.json`
-  - `tsconfig.spec.json`
-  - `vitest-base.config.ts`
-  - CI workflow
-- Goal:
-  - Make an explicit tooling decision instead of carrying forward the default test runner by inertia.
-- Decision:
-  - Migrate to Vitest using Angular's `@angular/build:unit-test` builder.
-- Notes:
-  - Removed Karma/Jasmine dependencies and config files.
-  - Converted specs to Vitest mocks and expectations.
-  - Updated CI to run the default `npm test` command without browser-specific flags.
-- Acceptance criteria:
-  - A documented decision exists.
-  - CI and local test commands work end to end.
-
-### 4. Replace subject-map game state with a typed signal-based store
-
-- Status: Completed
-- Priority: High
-- Files:
-  - `src/app/game-engine.service.ts`
-  - Related specs under `src/app/*.spec.ts`
-- Goal:
-  - Replace the current `Map<string, BehaviorSubject<string>>` / `Map<string, Subject<string>>` model with a typed state model built around Angular signals.
-- Scope:
-  - Introduce typed state for board cells, keyboard state, current row/column, target word, and outcome.
-  - Remove lazy subject creation and string-composed map keys where practical.
-  - Keep existing gameplay behavior unchanged.
-  - Preserve `newGame()`, `hasOngoingGame()`, and guess processing behavior.
-- Suggested approach:
-  - Model board state as arrays or records with explicit types instead of string keys such as `"1-3"`.
-  - Use `signal()` for writable state and `computed()` for derived state.
-  - Keep imperative methods for user actions, but have them update typed signal state directly.
-  - Expose read-only state to components.
-- Acceptance criteria:
-  - No gameplay regression.
-  - Existing tests still pass after being updated for the new state model.
-  - No component needs to cast observables back to `BehaviorSubject` in tests.
-  - Board, key colors, and win/loss states render exactly as before.
-- Notes:
-  - Replaced the lazy `Map<string, BehaviorSubject<string>>` state with signal-backed board, keyboard, cursor, target-word, and outcome state.
-  - Kept `registerForValue()`, `registerForState()`, and `registerKey()` as observable adapters so existing presentational components can migrate incrementally while game-complete state now reads from a signal directly.
-  - Added typed state readers used by the updated specs instead of mutating subjects directly.
-
-### 5. Introduce typed tile and key state unions
-
-- Status: Completed
-- Priority: Medium
-- Files:
-  - `src/app/game-engine.service.ts`
-  - `src/app/letter/letter.component.ts`
-  - `src/app/key/key.component.ts`
-  - Related specs
-- Goal:
-  - Replace loose string values for visual state with explicit TypeScript unions or enums.
-- Scope:
-  - Define types for tile state and keyboard key state.
-  - Replace ad hoc values such as `'black'`, `'light'`, `'dark'`, `'green'`, `'yellow'`, `'grey'`, `'red'`, and `'clear'` with typed state handling.
-- Acceptance criteria:
-  - Compiler catches invalid state values.
-  - Components and service use the shared types consistently.
-  - Tests no longer rely on untyped string conventions.
-- Notes:
-  - Added shared `TileState` and `KeyState` unions in `src/app/game-state.types.ts`.
-  - Updated the game engine, letter component, and key component APIs to use the shared types and defaults.
-  - Tightened affected specs so test doubles return valid typed state values.
-
 ### 6. Convert presentational component inputs to signal inputs where useful
 
 - Status: Not started
@@ -162,7 +88,7 @@
 
 ### 11. Align tests with zoneless runtime
 
-- Status: Not started
+- Status: Completed
 - Priority: Medium
 - Files:
   - Relevant `*.spec.ts` files
@@ -178,6 +104,10 @@
 - Acceptance criteria:
   - Test suite passes under the zoneless configuration.
   - No flaky specs caused by implicit ZoneJS-era assumptions.
+- Notes:
+  - Added `provideZonelessChangeDetection()` explicitly to component specs that create Angular components through TestBed.
+  - Replaced `fixture.whenStable()` in router-driven component tests with `vi.waitFor(...)` assertions on navigation outcomes.
+  - Kept the change local to specs rather than introducing a shared global test setup.
 
 ## Notes
 

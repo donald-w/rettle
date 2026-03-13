@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
@@ -24,6 +24,7 @@ describe('HelpComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HelpComponent, DummyGameComponent],
       providers: [
+        provideZonelessChangeDetection(),
         provideRouter([{ path: 'game', component: DummyGameComponent }]),
         provideLocationMocks(),
         {
@@ -77,8 +78,6 @@ describe('HelpComponent', () => {
     const button = fixture.debugElement.query(By.css('button')).nativeElement as HTMLButtonElement;
 
     button.click();
-    await fixture.whenStable();
-
-    expect(location.path()).toBe('/game');
+    await vi.waitFor(() => expect(location.path()).toBe('/game'));
   });
 });

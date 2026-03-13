@@ -1,3 +1,4 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import type { MockedObject } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -21,7 +22,10 @@ describe('KeyboardComponent', () => {
 
         await TestBed.configureTestingModule({
             imports: [KeyboardComponent],
-            providers: [{ provide: GameEngineService, useValue: engineSpy }],
+            providers: [
+                provideZonelessChangeDetection(),
+                { provide: GameEngineService, useValue: engineSpy }
+            ],
         }).compileComponents();
     });
 

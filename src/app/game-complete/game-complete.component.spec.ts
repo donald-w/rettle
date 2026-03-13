@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import type { Mock } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
@@ -24,6 +24,7 @@ describe('GameCompleteComponent', () => {
     await TestBed.configureTestingModule({
       imports: [GameCompleteComponent],
       providers: [
+        provideZonelessChangeDetection(),
         {
           provide: GameEngineService,
           useValue: mockGameEngine
