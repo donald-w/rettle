@@ -2,46 +2,29 @@
 
 ## Angular Modernization
 
-### 3. Re-evaluate `withHashLocation()` based on hosting strategy
+### 3. Decide whether to keep Karma/Jasmine or migrate to Vitest
 
-- Status: Not started
-- Priority: Low
-- Files:
-  - `src/main.ts`
-  - Deployment/hosting config if changed
-- Goal:
-  - Confirm whether hash-based routing is still the right tradeoff for GitHub Pages hosting.
-- Scope:
-  - Keep as-is if GitHub Pages remains the target without SPA fallback handling.
-  - Consider path-based routing only if hosting changes or a fallback strategy is added.
-- Acceptance criteria:
-  - An explicit decision is documented.
-  - No routing change is made without deployment support for refresh/deep-link behavior.
-
-### 4. Decide whether to keep Karma/Jasmine or migrate to Vitest
-
-- Status: Not started
+- Status: Completed
 - Priority: Medium
 - Files:
   - `package.json`
   - `angular.json`
-  - `karma.conf.js`
-  - `src/test.ts`
+  - `tsconfig.spec.json`
+  - `vitest-base.config.ts`
   - CI workflow
 - Goal:
   - Make an explicit tooling decision instead of carrying forward the default test runner by inertia.
-- Decision options:
-  - Keep Karma/Jasmine if stability is more important than test-runner modernization.
-  - Migrate to Vitest for a more current Angular testing toolchain and faster local runs.
-- Suggested approach:
-  - If keeping Karma, document that decision and stop treating it as accidental legacy.
-  - If migrating, use Angular’s migration guidance and update CI in the same change.
+- Decision:
+  - Migrate to Vitest using Angular's `@angular/build:unit-test` builder.
+- Notes:
+  - Removed Karma/Jasmine dependencies and config files.
+  - Converted specs to Vitest mocks and expectations.
+  - Updated CI to run the default `npm test` command without browser-specific flags.
 - Acceptance criteria:
   - A documented decision exists.
-  - If migrated, CI and local test commands work end to end.
-  - If not migrated, no partial setup for Vitest remains in the repo.
+  - CI and local test commands work end to end.
 
-### 5. Replace subject-map game state with a typed signal-based store
+### 4. Replace subject-map game state with a typed signal-based store
 
 - Status: Not started
 - Priority: High
@@ -66,7 +49,7 @@
   - No component needs to cast observables back to `BehaviorSubject` in tests.
   - Board, key colors, and win/loss states render exactly as before.
 
-### 6. Introduce typed tile and key state unions
+### 5. Introduce typed tile and key state unions
 
 - Status: Not started
 - Priority: Medium
@@ -85,7 +68,7 @@
   - Components and service use the shared types consistently.
   - Tests no longer rely on untyped string conventions.
 
-### 7. Convert presentational component inputs to signal inputs where useful
+### 6. Convert presentational component inputs to signal inputs where useful
 
 - Status: Not started
 - Priority: High
@@ -107,7 +90,7 @@
   - Inputs remain strongly typed.
   - Templates and tests continue to behave the same way.
 
-### 8. Move presentational components to `OnPush` and remove manual change detection
+### 7. Move presentational components to `OnPush` and remove manual change detection
 
 - Status: Not started
 - Priority: High

@@ -9,7 +9,7 @@ Rettle is an Angular 21 single-page web application word guessing game with six-
 ## Runbook
 - **Start dev server:** `npm start` (runs `ng serve --host 0.0.0.0 --port 4200 --allowed-hosts`).
 - **Lint:** `npm run lint` (ESLint) or `npm run lint:fix` to auto-fix.
-- **Unit tests:** `npm test` (Karma/Jasmine, `--watch=false` by default). CI pins ChromeHeadless; local runs generally work with the default launcher.
+- **Unit tests:** `npm test` (Angular unit-test builder + Vitest, `--watch=false` by default).
 - **Build:** `npm run build` (production build via `build:prod`, output to `dist/rettle/browser`).
 
 ## Game flow
