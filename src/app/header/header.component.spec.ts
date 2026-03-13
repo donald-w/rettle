@@ -1,8 +1,8 @@
+import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { HeaderComponent } from './header.component';
-import { Component } from '@angular/core';
 
 @Component({ template: '', standalone: true })
 class DummyComponent {}
@@ -16,6 +16,7 @@ describe('HeaderComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
       providers: [
+        provideZonelessChangeDetection(),
         provideRouter([
           { path: 'game', component: DummyComponent },
           { path: 'menu', component: DummyComponent },
@@ -46,9 +47,8 @@ describe('HeaderComponent', () => {
 
     const menuButton = fixture.debugElement.query(By.css('button[aria-label="Menu"]')).nativeElement as HTMLButtonElement;
     menuButton.click();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(router.url).toBe('/menu'));
 
-    expect(router.url).toBe('/menu');
   });
 
   it('should navigate to game when menu icon clicked from menu', async () => {
@@ -57,9 +57,8 @@ describe('HeaderComponent', () => {
 
     const menuButton = fixture.debugElement.query(By.css('button[aria-label="Menu"]')).nativeElement as HTMLButtonElement;
     menuButton.click();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(router.url).toBe('/game'));
 
-    expect(router.url).toBe('/game');
   });
 
   it('should navigate to help when help icon clicked from game', async () => {
@@ -68,9 +67,8 @@ describe('HeaderComponent', () => {
 
     const helpButton = fixture.debugElement.query(By.css('button[aria-label="Help"]')).nativeElement as HTMLButtonElement;
     helpButton.click();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(router.url).toBe('/help'));
 
-    expect(router.url).toBe('/help');
   });
 
   it('should navigate to game when help icon clicked from help', async () => {
@@ -79,9 +77,8 @@ describe('HeaderComponent', () => {
 
     const helpButton = fixture.debugElement.query(By.css('button[aria-label="Help"]')).nativeElement as HTMLButtonElement;
     helpButton.click();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(router.url).toBe('/game'));
 
-    expect(router.url).toBe('/game');
   });
 
   it('should navigate to game when title is clicked', async () => {
@@ -90,8 +87,7 @@ describe('HeaderComponent', () => {
 
     const titleButton = fixture.debugElement.query(By.css('button.title-button')).nativeElement as HTMLButtonElement;
     titleButton.click();
-    await fixture.whenStable();
+    await vi.waitFor(() => expect(router.url).toBe('/game'));
 
-    expect(router.url).toBe('/game');
   });
 });

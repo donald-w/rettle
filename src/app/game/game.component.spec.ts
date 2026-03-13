@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
@@ -16,6 +16,7 @@ describe('GameComponent', () => {
     await TestBed.configureTestingModule({
       imports: [GameComponent],
       providers: [
+        provideZonelessChangeDetection(),
         {
           provide: GameEngineService,
           useValue: {

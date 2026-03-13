@@ -1,3 +1,4 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import type { MockedObject } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
@@ -22,7 +23,10 @@ describe('KeyComponent', () => {
 
         await TestBed.configureTestingModule({
             imports: [KeyComponent],
-            providers: [{ provide: GameEngineService, useValue: gameEngineSpy }],
+            providers: [
+                provideZonelessChangeDetection(),
+                { provide: GameEngineService, useValue: gameEngineSpy }
+            ],
         }).compileComponents();
     });
 

@@ -1,3 +1,4 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import type { MockedObject } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
@@ -25,7 +26,10 @@ describe('LetterComponent', () => {
 
         await TestBed.configureTestingModule({
             imports: [LetterComponent],
-            providers: [{ provide: GameEngineService, useValue: gameEngineSpy }],
+            providers: [
+                provideZonelessChangeDetection(),
+                { provide: GameEngineService, useValue: gameEngineSpy }
+            ],
         }).compileComponents();
     });
 
