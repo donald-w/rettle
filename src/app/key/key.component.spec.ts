@@ -4,15 +4,16 @@ import { BehaviorSubject } from 'rxjs';
 
 import { KeyComponent } from './key.component';
 import { GameEngineService } from '../game-engine.service';
+import { KeyState } from '../game-state.types';
 
 describe('KeyComponent', () => {
     let component: KeyComponent;
     let fixture: ComponentFixture<KeyComponent>;
-    let keyColor$: BehaviorSubject<string>;
+    let keyColor$: BehaviorSubject<KeyState>;
     let gameEngineSpy: MockedObject<Pick<GameEngineService, 'registerKey' | 'keyPressed'>>;
 
     beforeEach(async () => {
-        keyColor$ = new BehaviorSubject<string>('light');
+        keyColor$ = new BehaviorSubject<KeyState>('light');
         gameEngineSpy = {
             registerKey: vi.fn().mockName('GameEngineService.registerKey'),
             keyPressed: vi.fn().mockName('GameEngineService.keyPressed')

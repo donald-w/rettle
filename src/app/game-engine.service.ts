@@ -2,16 +2,17 @@ import { Injectable, Injector, computed, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { DictionaryService } from './dictionary.service';
+import { DEFAULT_KEY_STATE, DEFAULT_TILE_STATE, KeyState, TileState } from './game-state.types';
 
 export type GameOutcome = 'playing' | 'won' | 'lost';
 
 interface BoardCell {
   value: string;
-  state: string;
+  state: TileState;
 }
 
 type BoardState = BoardCell[][];
-type KeyboardState = Record<string, string>;
+type KeyboardState = Record<string, KeyState>;
 
 @Injectable({
   providedIn: 'root'
@@ -104,16 +105,16 @@ export class GameEngineService {
     );
   }
 
-  registerForState(word: number, position: number): Observable<string> {
+  registerForState(word: number, position: number): Observable<TileState> {
     return toObservable(
       computed(() => this.getCell(word, position).state),
       { injector: this.injector }
     );
   }
 
-  registerKey(key: string): Observable<string> {
+  registerKey(key: string): Observable<KeyState> {
     return toObservable(
-      computed(() => this.keyboardStateSignal()[key] ?? 'light'),
+      computed(() => this.keyboardStateSignal()[key] ?? DEFAULT_KEY_STATE),
       { injector: this.injector }
     );
   }
@@ -122,19 +123,19 @@ export class GameEngineService {
     return this.getCell(word, position).value;
   }
 
-  getCellState(word: number, position: number): string {
+  getCellState(word: number, position: number): TileState {
     return this.getCell(word, position).state;
   }
 
-  setKeyColor(key: string, color: string): void {
+  setKeyColor(key: string, color: KeyState): void {
     this.keyboardStateSignal.update((keyboardState) => ({
       ...keyboardState,
       [key]: color,
     }));
   }
 
-  getKeyColor(key: string): string {
-    return this.keyboardStateSignal()[key] ?? 'light';
+  getKeyColor(key: string): KeyState {
+    return this.keyboardStateSignal()[key] ?? DEFAULT_KEY_STATE;
   }
 
   private handleEnter(): void {
@@ -209,7 +210,7 @@ export class GameEngineService {
     return Array.from({ length: this.maxAttempts }, () =>
       Array.from({ length: this.wordlength }, () => ({
         value: '',
-        state: 'black',
+        state: DEFAULT_TILE_STATE,
       }))
     );
   }
@@ -228,7 +229,7 @@ export class GameEngineService {
     this.updateBoardCell(word, position, { value });
   }
 
-  private setCellState(word: number, position: number, state: string): void {
+  private setCellState(word: number, position: number, state: TileState): void {
     this.updateBoardCell(word, position, { state });
   }
 
@@ -249,7 +250,7 @@ export class GameEngineService {
     });
   }
 
-  private setWordColor(colour: string): void {
+  private setWordColor(colour: TileState): void {
     this.boardSignal.update((boardState) => {
       const rowIndex = this.currentWord - 1;
       const nextBoardState = boardState.slice();
@@ -271,10 +272,10 @@ export class GameEngineService {
   }
 }
 
-function processGuess(word: string, guess: string): string[] {
+function processGuess(word: string, guess: string): TileState[] {
   const wordArray = word.split('');
   const guessArray = guess.split('');
-  const result: string[] = [];
+  const result: TileState[] = [];
 
   for (let i = 0; i < wordArray.length; i++) {
     const greenOrGrey = wordArray[i] === guessArray[i];

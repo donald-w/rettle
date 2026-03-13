@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 
 import { KeyboardComponent } from './keyboard.component';
 import { GameEngineService } from '../game-engine.service';
+import { DEFAULT_KEY_STATE } from '../game-state.types';
 
 describe('KeyboardComponent', () => {
     let component: KeyboardComponent;
@@ -16,7 +17,7 @@ describe('KeyboardComponent', () => {
             keyPressed: vi.fn().mockName('GameEngineService.keyPressed'),
             registerKey: vi.fn().mockName('GameEngineService.registerKey')
         };
-        engineSpy.registerKey.mockReturnValue(of(''));
+        engineSpy.registerKey.mockReturnValue(of(DEFAULT_KEY_STATE));
 
         await TestBed.configureTestingModule({
             imports: [KeyboardComponent],

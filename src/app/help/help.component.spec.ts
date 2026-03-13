@@ -9,6 +9,7 @@ import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
 import { HelpComponent } from './help.component';
 import { GameEngineService } from '../game-engine.service';
+import { DEFAULT_TILE_STATE } from '../game-state.types';
 
 @Component({ template: '', standalone: true })
 class DummyGameComponent {}
@@ -29,7 +30,7 @@ describe('HelpComponent', () => {
           provide: GameEngineService,
           useValue: {
             registerForValue: () => of(''),
-            registerForState: () => of('black'),
+            registerForState: () => of(DEFAULT_TILE_STATE),
           },
         },
       ]
