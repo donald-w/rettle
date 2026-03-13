@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 
 import { GameComponent } from './game.component';
 import { GameEngineService } from '../game-engine.service';
+import { DEFAULT_KEY_STATE, DEFAULT_TILE_STATE } from '../game-state.types';
 
 describe('GameComponent', () => {
   let component: GameComponent;
@@ -20,8 +21,8 @@ describe('GameComponent', () => {
           useValue: {
             gameOutcome,
             registerForValue: () => of(''),
-            registerForState: () => of('black'),
-            registerKey: () => of('light'),
+            registerForState: () => of(DEFAULT_TILE_STATE),
+            registerKey: () => of(DEFAULT_KEY_STATE),
             keyPressed: vi.fn(),
             newGame: vi.fn(),
           },

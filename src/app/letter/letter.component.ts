@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameEngineService } from '../game-engine.service';
 import { NgClass, AsyncPipe } from '@angular/common';
+import { TileState } from '../game-state.types';
 
 @Component({
     selector: 'app-letter',
@@ -17,15 +18,15 @@ export class LetterComponent implements OnInit {
 
   @Input() useStatic = false;
   @Input() value = '';
-  @Input() state = '';
+  @Input() state: TileState = 'black';
 
   isGreen: boolean = false;
   isYellow: boolean = false;
   isGrey: boolean = false;
   isRed: boolean = false;
 
-  value$: Observable<string> = of("");
-  state$: Observable<string> = of("");
+  value$: Observable<string> = of('');
+  state$: Observable<TileState> = of('black');
 
   private destroyRef = inject(DestroyRef);
 
@@ -42,7 +43,7 @@ export class LetterComponent implements OnInit {
       this.state$ = this.gameEngine.registerForState(this.row, this.position);
     }
 
-    this.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: string) => {
+    this.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: TileState) => {
       this.isGreen = false;
       this.isYellow = false;
       this.isGrey = false;

@@ -4,17 +4,18 @@ import { BehaviorSubject } from 'rxjs';
 
 import { LetterComponent } from './letter.component';
 import { GameEngineService } from '../game-engine.service';
+import { TileState } from '../game-state.types';
 
 describe('LetterComponent', () => {
     let component: LetterComponent;
     let fixture: ComponentFixture<LetterComponent>;
     let value$: BehaviorSubject<string>;
-    let state$: BehaviorSubject<string>;
+    let state$: BehaviorSubject<TileState>;
     let gameEngineSpy: MockedObject<Pick<GameEngineService, 'registerForValue' | 'registerForState'>>;
 
     beforeEach(async () => {
         value$ = new BehaviorSubject<string>('A');
-        state$ = new BehaviorSubject<string>('grey');
+        state$ = new BehaviorSubject<TileState>('grey');
         gameEngineSpy = {
             registerForValue: vi.fn().mockName('GameEngineService.registerForValue'),
             registerForState: vi.fn().mockName('GameEngineService.registerForState')

@@ -55,7 +55,7 @@
 
 ### 5. Introduce typed tile and key state unions
 
-- Status: Not started
+- Status: Completed
 - Priority: Medium
 - Files:
   - `src/app/game-engine.service.ts`
@@ -71,6 +71,10 @@
   - Compiler catches invalid state values.
   - Components and service use the shared types consistently.
   - Tests no longer rely on untyped string conventions.
+- Notes:
+  - Added shared `TileState` and `KeyState` unions in `src/app/game-state.types.ts`.
+  - Updated the game engine, letter component, and key component APIs to use the shared types and defaults.
+  - Tightened affected specs so test doubles return valid typed state values.
 
 ### 6. Convert presentational component inputs to signal inputs where useful
 

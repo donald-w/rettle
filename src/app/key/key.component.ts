@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameEngineService } from '../game-engine.service';
 import { NgClass } from '@angular/common';
+import { KeyState } from '../game-state.types';
 
 @Component({
     selector: 'app-key',
@@ -16,7 +17,7 @@ export class KeyComponent implements OnInit {
   @Input() label: string = "";
 
   public display: string = "";
-  private keyColor$: Observable<string> = of("");
+  private keyColor$: Observable<KeyState> = of('light');
 
   isLight: boolean = false;
   isDark: boolean = false;
@@ -36,7 +37,7 @@ export class KeyComponent implements OnInit {
 
     this.keyColor$ = this.gameEngine.registerKey(this.display);
 
-    this.keyColor$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: string) => {
+    this.keyColor$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: KeyState) => {
       if (value === "light") {
         this.isLight = true;
         this.isDark = false;
