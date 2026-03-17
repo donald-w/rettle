@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { BuildInfoService } from '../build-info.service';
 import { LetterComponent } from '../letter/letter.component';
 
 @Component({
@@ -9,4 +10,10 @@ import { LetterComponent } from '../letter/letter.component';
   standalone: true,
   imports: [RouterLink, LetterComponent]
 })
-export class HelpComponent { }
+export class HelpComponent {
+  constructor(private readonly buildInfoService: BuildInfoService) {}
+
+  get buildInfoText(): string {
+    return this.buildInfoService.displayText;
+  }
+}

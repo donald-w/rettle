@@ -6,6 +6,7 @@
 /dist
 /tmp
 /out-tsc
+/src/app/build-info.generated.ts
 # Only exists if Bazel was run
 /bazel-out
 
