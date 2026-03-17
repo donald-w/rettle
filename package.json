@@ -8,7 +8,7 @@
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --port 4200 --allowed-hosts",
     "build": "npm run build:prod",
-    "build:prod": "ng build --configuration production",
+    "build:prod": "node scripts/write-build-info.js && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false",
     "lint": "ng lint",

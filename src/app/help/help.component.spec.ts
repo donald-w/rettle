@@ -7,6 +7,7 @@ import { RouterLink } from '@angular/router';
 import { of } from 'rxjs';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
+import { BuildInfoService } from '../build-info.service';
 import { HelpComponent } from './help.component';
 import { GameEngineService } from '../game-engine.service';
 import { DEFAULT_TILE_STATE } from '../game-state.types';
@@ -19,8 +20,11 @@ describe('HelpComponent', () => {
   let fixture: ComponentFixture<HelpComponent>;
   let router: Router;
   let location: Location;
+  let buildInfoText: string;
 
   beforeEach(async () => {
+    buildInfoText = '(c) Donald W - HASH - BUILD TIME';
+
     await TestBed.configureTestingModule({
       imports: [HelpComponent, DummyGameComponent],
       providers: [
@@ -32,6 +36,14 @@ describe('HelpComponent', () => {
           useValue: {
             registerForValue: () => of(''),
             registerForState: () => of(DEFAULT_TILE_STATE),
+          },
+        },
+        {
+          provide: BuildInfoService,
+          useValue: {
+            get displayText() {
+              return buildInfoText;
+            },
           },
         },
       ]
@@ -79,5 +91,22 @@ describe('HelpComponent', () => {
 
     button.click();
     await vi.waitFor(() => expect(location.path()).toBe('/game'));
+  });
+
+  it('should render placeholder build information by default', () => {
+    const native = fixture.nativeElement as HTMLElement;
+
+    expect(native.querySelector('.build-info')?.textContent?.trim()).toBe('(c) Donald W - HASH - BUILD TIME');
+  });
+
+  it('should render build information when build metadata is available', () => {
+    fixture.destroy();
+    buildInfoText = '(c) Donald W - abc1234 - 2026-03-17 14:22 UTC';
+
+    fixture = TestBed.createComponent(HelpComponent);
+    fixture.detectChanges();
+
+    const native = fixture.nativeElement as HTMLElement;
+    expect(native.querySelector('.build-info')?.textContent?.trim()).toBe('(c) Donald W - abc1234 - 2026-03-17 14:22 UTC');
   });
 });
