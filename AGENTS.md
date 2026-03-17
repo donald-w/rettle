@@ -227,7 +227,7 @@ Services are `providedIn: 'root'` by default (singleton).
 The GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on push to `main`:
 
 1. **Checkout** the repository
-2. **Setup Node.js 22** with npm cache
+2. **Setup Node.js 24** with npm cache
 3. **Install dependencies** with `npm ci`
 4. **Run lint** with `npm run lint`
 5. **Run tests** with `npm test -- --watch=false`
@@ -258,7 +258,7 @@ The GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on push to `ma
 - The game uses a deterministic "word of the day" based on date hashing
 - Debug helper: In browser console, call `window.tellme()` to reveal the answer
 - The grid is 6 columns (letters) × 7 rows (attempts)
-- Node version is pinned to **22** via `.nvmrc`; align local tooling before running scripts.
+- Node version is pinned to **24** via `.nvmrc`; align local tooling before running scripts.
 - `GameCompleteComponent` offers a "Try a different word" action that seeds a randomized new game.
 - `MenuComponent` provides a "New game" button with confirmation when abandoning in-progress games and toggles colour accessibility mode (patterned tiles and alternate palette).
 - `KeyboardComponent` listens for physical keyup events; `KeyComponent` handles on-screen clicks and forwards to `GameEngineService.keyPressed`.

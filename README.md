@@ -3,7 +3,7 @@
 Rettle is an Angular 21 single-page web application word guessing game with six-letter words. Originally built over a few evenings in early 2022, it now serves as a playground for AI tooling. The project follows the default Angular CLI layout with all source under `src/` and is deployed via GitHub Pages at [rettle.me](https://rettle.me/).
 
 ## Prerequisites and setup
-- **Node.js 22** (see `.nvmrc`); `npm` ships with Node and is used for all scripts.
+- **Node.js 24** (see `.nvmrc`); `npm` ships with Node and is used for all scripts.
 - Install dependencies with `npm ci`.
 
 ## Runbook
